@@ -36,6 +36,8 @@ HISTFILE=~/.zsh-history
 setopt INTERACTIVE_COMMENTS # allow inline comments like this
 setopt PROMPT_SUBST
 
+export KEYTIMEOUT=1
+
 todo() {
    echo $@ > ~/.todo
    source ~/.zprompt
