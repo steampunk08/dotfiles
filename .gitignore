@@ -1,0 +1,5 @@
+*.sw[pon]
+*~
+.netrwhist
+.vim/bundle/**/.git/
+*info

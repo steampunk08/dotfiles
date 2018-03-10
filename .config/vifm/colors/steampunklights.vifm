@@ -1,0 +1,10 @@
+highlight Directory ctermfg=105 cterm=none
+highlight Link ctermfg=111 cterm=none,bold
+highlight Border ctermbg=236 cterm=none
+highlight Executable ctermfg=154 cterm=none,bold
+highlight Statusline ctermbg=236 ctermfg=15 cterm=none
+highlight WildMenu ctermfg=16 ctermbg=105 cterm=none
+highlight Currline ctermfg=none ctermbg=none cterm=none,reverse
+highlight Win ctermfg=247 ctermbg=232
+highlight Topline ctermbg=197 ctermfg=16
+highlight ToplineSel ctermbg=197 ctermfg=16
