@@ -9,7 +9,6 @@ export ZSH=$HOME/.oh-my-zsh
 plugins=(
    vi-mode
    colorize
-   git
    zsh-autosuggestions
 )
 #zsh-navigation-tools
@@ -22,14 +21,21 @@ bindkey "^E" end-of-line
 bindkey "^K" kill-line
 bindkey "^R" history-incremental-search-backward
 bindkey "^P" history-search-backward
-bindkey "^Y" accept-and-hold
-bindkey "^N" insert-last-word
-bindkey "^Q" push-line-or-edit
+bindkey "^N" history-search-forward
 bindkey "^F" vi-forward-char
 bindkey "^B" vi-backward-char
-#bindkey 
+bindkey "^L" forward-char
 
-#bindkey "^[r" source ~/.zshrc
+bindkey "^[f" forward-word
+bindkey "^[b" forward-word
+
+zle -N source-zshrc
+
+source-zshrc() {
+   source ~/.zshrc
+   echo "Hello, world"
+}
+bindkey "^[r" source-zshrc
 
 HISTFILE=~/.zsh-history
 
