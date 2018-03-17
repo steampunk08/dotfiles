@@ -1,19 +1,28 @@
-VAR="puts
-File.read('$HOME/.todo').each_line do |x|
-   puts \"  * #{x}\"
-end
-"
+# Author: Siphesihle Mhlongo
+# Personal Prompt
 
-TODO=$(ruby -e "$VAR")
+prompt_steamline_setup() {
+   TODO=$(ruby -e "
+   if File.size('$HOME/.todo') < 2
+      puts '  * you current have no todo\'s'
+   else
+      File.read('$HOME/.todo').each_line do |x|
+         puts \"  * #{x}\"
+      end
+   end
+   ")
+   export PS1="
+%F{105}Sphe M%f [ %F{111}%~%f ]
+%B%F{242}$TODO%f%b
+-%f%(!.#.$) "
 
-export PS1="
-%F{105}Sphe M%f [ %F{111}%~%f ] (%B%F{242}$TODO%f%b
-) %F{111}$(git_current_branch) %f%(!.#.$) "
-
-export PS2="  %F{111}>%f "
-export PS3="  %F{111}>%f "
-export PS4="  %F{111}>%f "
-export PS5="  %F{111}>%f "
+   export PS2="  %F{111}>%f "
+   export PS3="  %F{111}>%f "
+   export PS4="  %F{111}>%f "
+   export PS5="  %F{111}>%f "
+}
 
 prompt_opts=(cr subst percent)
+prompt_steamline_setup
+
 # vim: ft=zsh

@@ -262,6 +262,7 @@ nnoremap <leader>ev :tabedit $MYVIMRC<cr>
 nnoremap <leader>sv :source $MYVIMRC<cr>
 nnoremap <leader>ez :tabedit ~/.zshrc<cr>
 nnoremap <localleader>r :w<cr>:so %<cr>
+nnoremap gv v$
 " movement mappings {{{
 noremap H ^
 noremap L $

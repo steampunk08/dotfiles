@@ -1,8 +1,17 @@
-#g Siphesihle Mhlongo's Zsh Config
+# Siphesihle Mhlongo's Zsh Config
 autoload -U compinit
-autoload -U promptinit
 compinit
+
+autoload -U promptinit
 promptinit
+
+ZSH_FUNCTIONS=/data/data/com.termux/files/usr/share/zsh/5.4.2/functions
+
+[ -f $ZSH_FUNCTIONS/prompt_steamline_setup ] || if [ -f ~/.zprompt ]; then
+   echo -e "\e[38;5;242;1mNOTE:\e[0;38;5;196m STEAMLINE PROMPT WAS JUST LOADED!\e[0m"
+   ln -s ~/.zprompt $ZSH_FUNCTIONS/prompt_steamline_setup
+fi
+prompt steamline &> /dev/null
 
 export ZSH=$HOME/.oh-my-zsh
 
@@ -11,7 +20,6 @@ plugins=(
    colorize
    zsh-autosuggestions
 )
-#zsh-navigation-tools
 
 source $ZSH/oh-my-zsh.sh
 source $HOME/.zprompt
@@ -29,14 +37,6 @@ bindkey "^L" forward-char
 bindkey "^[f" forward-word
 bindkey "^[b" forward-word
 
-zle -N source-zshrc
-
-source-zshrc() {
-   source ~/.zshrc
-   echo "Hello, world"
-}
-bindkey "^[r" source-zshrc
-
 HISTFILE=~/.zsh-history
 
 setopt INTERACTIVE_COMMENTS # allow inline comments like this
@@ -44,12 +44,7 @@ setopt PROMPT_SUBST
 
 export KEYTIMEOUT=1
 
-todo() {
-   echo $@ > ~/.todo
-   source ~/.zprompt
-}
-
-export SHELL="$PREFIX/bin/zsh"
+export SHELL=$PREFIX/bin/zsh
 export PATH=~/bin:$PATH
 export EDITOR="vim"
 export TERM="xterm-256color"

@@ -31,8 +31,10 @@
    plain = 242
 [color "decorate"]
    branch = 105 bold
-   tag = 242
+   tag = 226
+   separator=215
    HEAD = 197 bold
    remoteBranch = 197 bold
+   stash=242
 [credential]
 	helper = store
