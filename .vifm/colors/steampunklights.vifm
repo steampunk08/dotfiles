@@ -1,0 +1,16 @@
+highlight clear
+
+highlight Border ctermbg=234
+highlight Directory ctermfg=105
+highlight Win ctermbg=232
+highlight Executable ctermfg=154
+highlight Link ctermfg=111
+highlight CurrLine cterm=none,reverse
+highlight WildMenu cterm=none ctermbg=105 ctermfg=black
+highlight TopLine ctermbg=197 ctermfg=16
+highlight TopLineSel cterm=bold ctermbg=197 ctermfg=16
+"highlight SuggestBox ctermbg=235 ctermfg=black
+highlight Statusline cterm=none ctermbg=234 ctermfg=white
+"highlight
+"highlight
+"highlight

@@ -1,0 +1,12 @@
+#!/usr/bin/zsh
+
+tmux split-window -vb
+tmux select-pane -t 1
+
+if [[ ! -z $@ ]]; then
+   tmux send-keys "vifm $@" C-m
+else
+   tmux send-keys "vifm ." C-m
+fi
+
+exit $?

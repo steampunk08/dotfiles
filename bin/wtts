@@ -1,0 +1,15 @@
+#!/usr/bin/ruby
+
+sessions=`tmux list-sessions -F "#S"`.split
+sessions=(1..sessions.size).to_a.zip(sessions)
+
+banner="Available sessions"
+puts "#{banner}\n#{'-' * banner.size}\n\n"
+
+sessions.each do |n, session|
+   puts "#{n}) #{session}"
+end
+print "Please choose a session: "
+session_num = gets.to_i
+
+puts `tmux attach -t #{Hash[sessions][1]}`

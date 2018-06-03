@@ -1,0 +1,26 @@
+#!/usr/bin/zsh
+
+function make-aliases()
+{
+   declare aliases
+
+   aliases+="alias api='apt install' && "
+   aliases+="alias apl='apt list' && "
+   aliases+="alias aps='apt show' && "
+   aliases+="alias apr='apt remove'"
+
+   tmux send-keys $aliases C-m
+}
+
+tmux new-window -n downloader
+make-aliases
+
+tmux split-window -v
+make-aliases
+
+tmux split-window -t .1 -h
+tmux send-keys "vim ~/.todo" C-m
+
+tmux select-pane -t 3
+
+exit $?

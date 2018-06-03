@@ -1,16 +1,15 @@
 " Sphe M | Steampunk08 vimrc 2
 
 let g:disarmed = v:false
-if !exists('vimrc_has_been_sourced') || g:disarmed
-   echo "So much better now... L.E.L"
-   set rtp+=~/vim-steampunklights
+if !exists('VIMRC_HAS_BEEN_SOURCED') || g:disarmed
+   set runtimepath+=~/vim-steampunklights
 
-   let mapleader = "-"
    let maplocalleader = "="
-   let vimrc_has_been_sourced = "2.0.1"
+   let mapleader = "-"
 
    let VIMRC_MINIMAL_SETUP_MODE = v:false
-   " call pathogen#infect()
+   let VIMRC_HAS_BEEN_SOURCED = "2.0.1"
+   "call pathogen#infect()
 endif
 
 " NOTE: section is reserved for statusline/tabline configuration
@@ -34,6 +33,7 @@ function! Mode()
 endfunction
 " }}}
 " modifiable {{{
+"
 function! Modifiable()
    if !&modifiable || &readonly
       return nr2char(57506) . ' '
@@ -91,8 +91,8 @@ function! Statusline()
 
    set statusline=%#C1#\ %{toupper(Mode())}\ %#C12#
    set statusline+=%#C2#\ %{Modifiable()}%t%{ModFlag()}\ %#C23#
-   set statusline+=%#C3#\ %{SynName()}\ 
-   set statusline+=%=%#C3#%{&filetype}\ |
+   set statusline+=%#C3#\ %{SynName()}\ |
+   set statusline+=%=%#C3#\ %{&filetype}\ |
    set statusline+=%#C23#%#C2#\ %c:%l\ %#C12#%#C1#\ |
    set statusline+=%{GetFSize()}\ \|\ words\ %{WordCount()}\ |
 endfunction
@@ -167,7 +167,8 @@ set smartcase smarttab smartindent autoread
 set t_Co=256 mouse=a
 set signcolumn=auto foldcolumn=0
 set splitright
-set lazyredraw
+set lazyredraw fillchars=stlnc:x 
+"set iskeyword+=-
 " }}}
 
 " NOTE: section is reserved for user defined functions / plugins of a small size
@@ -177,10 +178,13 @@ command! Show call Show('\s+$')
 command! NoShow highlight! link ShowColour Normal
 
 function! Show(pattern)
+   " NOTE: arguments [pattern]
+   "       marks all occurances of pattern with Error
+   "       highlight group
    highlight! link ShowColour Error
    execute 'match ShowColour /\v' . a:pattern . '/'
-   try 
-      execute 'normal! /\v' . a:pattern  . "\<cr>"
+   try
+      execute 'normal! mogg/\v' . a:pattern  . "\<cr>`ozz"
    catch /E486/
    endtry
 endfunction
@@ -190,6 +194,10 @@ let g:squeeze_subto = ''
 
 command! -nargs=* -bang Squeeze call Squeeze(<q-args>, <bang>0)
 function! Squeeze(...)
+   " NOTE: arguments [pattern] [scope of replacement (g|)]
+   "       removes the first occurance of [pattern] in each
+   "       line if arg 2 is false or is null otherwise all
+   "       occurances of [pattern] are replaced with g:squeeze_subto
    if !exists('g:squeeze_subto')
       let g:squeeze_subto = ''
    endif
@@ -209,19 +217,25 @@ function! Squeeze(...)
 endfunction
 " }}}
 " Build {{{
-function! Build(language)
-   if a:language == "ruby"
-      let l:cmd = ':!' . a:language
-   elseif a:language == "python"
-      let l:cmd = ':!' . a:language . '2'
-   elseif a:language == "javascript"
-      let l:cmd = ':!node'
-   elseif a:language == "vim"
-      let l:cmd = ':source'
-   endif
+function! Build()
+   let build_maps = {
+      \ "ruby": "ruby",
+      \ "python": "python2",
+      \ "javascript": "node",
+      \ "zsh": "zsh",
+      \ "sh": "bash",
+      \ }
 
-   execute 'noremap <buffer> <localleader>r :w<cr>' . l:cmd . ' %<cr>'
+   let buildCmd = "source"
+   for [ lang, cmd ] in items(build_maps)
+      if &filetype == lang
+         let buildCmd = '!' . cmd
+         break
+      endif
+   endfor
+   execute 'normal! :' . buildCmd . " %\<cr>"
 endfunction
+nnoremap <localleader>r :call Build()<cr>
 " }}}
 " GotoLink {{{
 function! GotoLink()
@@ -252,16 +266,54 @@ endfunction
 
 nnoremap <localleader><localleader> :call QuickRun('')<cr>
 " }}}
+" GetSynname {{{
+nnoremap yid :let [@", @h] = [SynName(), SynName()]<cr>
+" }}}
+" Colourize  (colorscheme tease) {{{
+function! Colourize(name)
+   let counter = 0
+   while v:true
+      let counter += 1
+      execute "hi " . a:name . " ctermfg=" . counter
+      redraw!
+      sleep 200m
+      if counter > 249
+         let counter = 0
+      endif
+   endwhile
+endfunction
+" }}}
+" Tease (colorcheme tease) {{{
+function! Tease()
+   while v:true
+      let var = input("> ")
+      execute "hi " . var . " ctermfg=196"
+      redraw!
+      sleep 500m
+   endwhile
+endfunction
+" }}}
+" Reformat CSS {{{
+function! ReformatCSS()
+   echo "re-formatting..."
+   %s/{/{/g
+   %s/;/;/g
+   %s/}/}/g
+   redraw!
+   normal! gg=G
+   echo "done re-formatting!"
+endfunction
+" }}}
 " }}}
 
-execute 'iabbrev toc() ' . strftime('%-d %b %Y')
+execute 'iabbrev now() ' . strftime('%-d %b %Y')
 
 " NOTE: section is reserved for misc. mappings
 " mappings {{{
 nnoremap <leader>ev :tabedit $MYVIMRC<cr>
 nnoremap <leader>sv :source $MYVIMRC<cr>
 nnoremap <leader>ez :tabedit ~/.zshrc<cr>
-nnoremap <localleader>r :w<cr>:so %<cr>
+"nnoremap <localleader>r :w<cr>:so %<cr>
 nnoremap gv v$
 " movement mappings {{{
 noremap H ^
@@ -280,7 +332,7 @@ map <c-j> <down>
 map <c-l> <right>
 " }}}
 " utility {{{
-nmap <Esc><Esc> :nohlsearch<CR><Esc>
+nmap <esc><esc> :nohlsearch<cr><esc>
 nmap ; mG$a;<esc>`G
 
 inoremap <c-c> <c-o>yy<c-o>p<c-o>$
@@ -299,6 +351,11 @@ cnoremap [6~ <s-tab>
 augroup VIMSCRIPT
    autocmd FileType vim set foldmethod=marker foldlevel=0
    autocmd Filetype help nnoremap <buffer> <cr> <c-]>
+   autocmd Filetype vifm setfiletype vim
+augroup END
+
+augroup FILETYPE_SPERCIFIC
+   autocmd Filetype zsh,sh set iskeyword+=-
 augroup END
 
 augroup TMUX
@@ -310,24 +367,17 @@ augroup SETTING_FILETYPES
    autocmd!
    autocmd BufNewFile,BufRead prompt_*_setup setfiletype zsh
    autocmd BufNewFile,BufRead *.vifm setfiletype vim
-augroup END
-
-augroup BUILDING_FILES
-   autocmd!
-   autocmd FileType ruby call Build("ruby")
-   autocmd FileType vim call Build("vim")
-   autocmd FileType python call Build("python")
-   autocmd FileType javascript call Build("javascript")
+   autocmd BufNewFile,BufRead *.fish setfiletype zsh
 augroup END
 
 if !has('gui_running')
    set ttimeoutlen=10
    augroup FASTER_ESCAPE
       autocmd!
-      au InsertEnter  * set timeoutlen=0
-      au InsertLeave  * set timeoutlen=1000
-      au CmdlineEnter * set timeoutlen=0
-      au CmdlineLeave * set timeoutlen=1000
+      autocmd InsertEnter  * set timeoutlen=0
+      autocmd InsertLeave  * set timeoutlen=750
+      autocmd CmdlineEnter * set timeoutlen=0
+      autocmd CmdlineLeave * set timeoutlen=750
    augroup END
 endif
 " }}}
@@ -345,7 +395,7 @@ filetype off
 call vundle#begin('~/vim-bundle/')
 
 Plugin 'VundleVim/Vundle.vim'
-"Plugin 'scrooloose/syntastic'
+Plugin 'scrooloose/syntastic'
 Plugin 'scrooloose/nerdtree'
 Plugin 'scrooloose/nerdcommenter'
 Plugin 'tpope/vim-surround'

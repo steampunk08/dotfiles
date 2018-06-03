@@ -1,0 +1,98 @@
+#!/usr/bin/zsh
+
+PACKAGES=(
+   coreutils binutils diffutils
+   play-audio ruby
+   zsh zip poppler
+   dx ecj clang
+   termux-exec termux-tools vim-python
+   termux-api termux-am busybox
+   bc bash curl
+   man make nodejs
+   python python2 tmux
+   tar util-linux vifm
+   w3m wget weechat
+)
+
+EXTRA_PACKAGES=(
+   figlet fortune fish
+   htop cmatrix toilet
+   tree sqlite xz-utils
+   ctags
+)
+
+function DOWNLOAD-PACKAGES
+{
+   print -P %F{95}downloading packages: $@%f && echo
+   sleep 3
+   for pack in $@; do
+      print -P %F{154}%B $pack%b%f
+
+      echo -en "\e[38;5;241m"
+      apt install $pack
+      echo -en "\e[0m"
+
+      sleep 0.3
+   done
+}
+
+DOTFILES_DIR=${0:h}
+
+if [[ $PWD != $DOTFILES_DIR ]]; then
+   cd $DOTFILES_DIR
+fi
+
+function LINK-FILES
+{
+   FILES=(.* bin)
+   for file in $FILES; do
+      for ignore in $@; do
+         [[ $file = $ignore ]] && SKIP="yes"
+      done
+      if [[ ! -z $SKIP ]]; then
+         continue
+      fi && SKIP=""
+      if [ ! -f $HOME/$file ] && [ ! -d $HOME/$file ]; then
+         if [ -f $file ]; then
+            link $file $HOME/$file
+         elif [ -d $file ]; then
+            ln -s $file $HOME/$file
+         fi
+      else
+         print -P %F{197}$HOME/$file exists%f
+      fi
+   done
+}
+
+alias write="print -P %F{105}%B"
+
+function main {
+   write upgrading & updating...%b%f
+   apt update && apt upgrade
+
+   PRINT downloading essential packages...%b%f
+   DOWNLOAD-PACKAGES ${PACKAGES[*]}
+
+   if [[ $1 = "--with-extras" ]]; then
+      PRINT downloading extra packages...%b%f
+      DOWNLOAD-PACKAGES ${EXTRA_PACKAGES[*]}
+
+      print -P %F{197}%Bfetching vim plugins...%b%f
+      if [ ! -d ~/vim-bundle ]; then
+         mkdir ~/vim-bundle
+         source 
+      fi
+   fi
+
+   if [ ! -d ~/dotfiles ]; then
+      PRINT fetching resources...%b%f
+      git clone https://github.com/steampunk08/dotfiles ~/dotfiles
+   fi
+
+   EXCEPT=(.gitignore .git)
+   PRINT linking config files...%b%f
+
+   LINK-FILES ${EXCEPT[*]}
+}
+
+main $@

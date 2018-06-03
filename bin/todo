@@ -1,0 +1,33 @@
+#!/usr/bin/zsh
+
+[[ -z $TODO_PATH ]] && TODO_PATH=~/.todo
+[[ -f $TODO_PATH ]] || touch $TODO_PATH
+
+function show_usage() { 
+   echo "script to manage todo's in \$TODO_PATH"
+   echo
+   echo "Usage: todo [options] [message]"
+   echo
+   echo "Options"
+   echo "    -c, clear the todo file before writing [message]"
+   echo "    -e, use \$EDITOR to edit todo file"
+   echo "    -h, show this message"
+   echo "    -l, list all todos"
+   echo 
+   echo "Todo script written by Sphe M"
+   exit 1
+}
+
+while getopts ":celh" option; do
+   case $option in
+      c ) echo ${argv:2} > $TODO_PATH ;;
+      e ) $EDITOR $TODO_PATH ;;
+      l ) cat $TODO_PATH ;;
+      h ) show_usage ;;
+      * ) show_usage ;;
+   esac
+done
+
+if [[ -z $option ]] && [[ ! -z $1 ]]; then
+   echo $@ >> $TODO_PATH 
+fi

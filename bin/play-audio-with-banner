@@ -1,0 +1,19 @@
+#!/usr/bin/zsh
+
+declare size=${$(stty size)[2]}
+declare line
+
+let size--
+
+for i in {0..$size}; do
+   line+="-"
+done
+
+echo "$line"
+
+toilet -f mono12 "Play
+Audio" | lolcat
+
+echo "$line"
+echo "song name: " $@
+play-audio $@

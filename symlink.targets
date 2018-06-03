@@ -1,0 +1,5 @@
+$(soft)
+.termux .shortcuts .vifm .vim addons bin 
+
+$(hard)
+.bashrc .vimrc .zshrc .tmux.conf .gitconfig .zprompt

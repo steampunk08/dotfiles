@@ -1,0 +1,14 @@
+#!/usr/bin/zsh
+
+if [[ -z $@ ]]; then
+   tmux new-window -n music -c /storage/sdcard1/com.ayamob.video/
+   tmux send-keys "vifm ." C-m
+
+   tmux split-window -v -c /storage/sdcard1/Music/
+   tmux send-keys "vifm ." C-m
+else
+   tmux split-window -vb -c $1
+   tmux send-keys "vifm ." C-m
+fi
+
+exit $?

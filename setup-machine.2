@@ -1,0 +1,94 @@
+#!/usr/bin/zsh
+
+PACKAGES=(
+   bc busybox clang coreutils
+   curl diffutils dx ecj make
+   man nodejs python python2
+   ruby termux-am termux-api
+   termux-exec termux-tools
+   tmux util-linux vifm vim-python
+   wget zip zsh
+)
+
+EXTRA_PACKAGES=(
+   cmatrix ctags figlet
+   fish htop sqlite
+   toilet tree xz-utils
+)
+EM() {
+   echo %F{105}%B$1%b%f
+}
+# directory where setup scripts are generated
+SCRIPTS_DIRECTORY=setup-scripts
+
+DOWNLOAD_SCRIPT_NAME=download.zsh
+EXTRAS_SCRIPT_NAME=extras.zsh
+SYMLINK_SCRIPT_NAME=symlink.zsh
+
+SYMLINK_TARGET_FILE=symlink.targets
+SYMLINK_DESTINATION=$HOME/hello
+
+if [ ! -d $SCRIPTS_DIRECTORY ]; then
+   mkdir $SCRIPTS_DIRECTORY
+   print -P directory $(EM $SCRIPTS_DIRECTORY) was created.
+fi
+cd $SCRIPTS_DIRECTORY
+
+if [ ! -d $SYMLINK_DESTINATION ]; then
+   mkdir $SYMLINK_DESTINATION
+   print -P directory $(EM $SYMLINK_DESTINATION) was created.
+fi
+
+IFS_SAVE=$IFS
+
+init-shebang() {
+   echo '#!/usr/bin/zsh' > $1
+}
+
+apt-packages() {
+   output_filename=$1 && shift 1 argv
+   packages=$@
+   init-shebang $output_filename
+   IFS=$IFS_SAVE
+
+   for package in ${packages:0}; do
+      echo apt install $package >> $output_filename
+   done
+   print -P $(EM $DOWNLOAD_SCRIPT_NAME)...generated \!
+}
+
+symlink-files() {
+   init-shebang $1
+
+   if [ ! -f ../$SYMLINK_TARGET_FILE ]; then
+      print -P $(EM $SYMLINK_TARGET_FILE) does not exist \!
+   fi
+   IFS="
+   "
+   for target in $(cat ../$SYMLINK_TARGET_FILE); do
+      if [[ ${target:0:2} = '$(' ]]; then
+         LINK_COMMAND=${target:2:-1}
+         continue
+      fi
+
+      for file in $(echo $target | sed "s/ /\n/g"); do
+         if [[ $LINK_COMMAND = "hard" ]]; then
+            echo link ../$file $SYMLINK_DESTINATION/$file >> $1
+            continue
+         fi
+         # NEEDS WORK
+         #echo "(cd .. && "ln -s dotfiles/$file $SYMLINK_DESTINATION")" >> $1
+         echo "ln -s ../$file $SYMLINK_DESTINATION" >> $1
+      done
+   done
+   print -P $(EM $SYMLINK_SCRIPT_NAME)...generated \!
+   IFS=$IFS_SAVE
+}
+
+main() {
+   apt-packages ${DOWNLOAD_SCRIPT_NAME} ${PACKAGES:0}
+   symlink-files ${SYMLINK_SCRIPT_NAME}
+   cd ..
+}
+
+main

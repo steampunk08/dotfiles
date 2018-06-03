@@ -1,0 +1,3 @@
+#!/usr/bin/bash
+
+scriptreplay -t replay.timing typescript

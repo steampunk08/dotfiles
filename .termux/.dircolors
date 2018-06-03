@@ -1,8 +1,9 @@
-# The keywords COLOR, OPTIONS, and EIGHTBIT (honored by the
-# slackware version of dircolors) are recognized but ignored.
+#         DIRCOLORS
+# maintainer: Siphesihle Mhlongo
+#    updated: 08 Apr 2018
+# theme name: sweet spring
 
-# Below, there should be one TERM entry for each termtype that is colorizable
-# TERMINAL TYPES {{{
+# termcap {{{
 TERM Eterm
 TERM ansi
 TERM color-xterm
@@ -53,145 +54,165 @@ TERM xterm-88color
 TERM xterm-color
 TERM xterm-debian
 # }}}
-# SPECIAL {{{
-#NORMAL 00 
-#FILE 00 
-#RESET 0 
-DIR 38;5;105 
-LINK 01;38;5;111 
- 
-# MULTIHARDLINK 00 
-FIFO 33 
-SOCK 01;35 
-# DOOR 01;44 
-BLK 00;35 
-CHR 01;33 
-ORPHAN 00;41 
-MISSING 00;45 
-
-SETUID 37;41 
-SETGID 30;43 
-#CAPABILITY 30;41 
-STICKY_OTHER_WRITABLE 30;42 
-OTHER_WRITABLE 34;42 
-STICKY 37;44 
-# This is for files with execute permission:
+# special {{{
+#NORMAL 00
+#FILE 00
+#RESET 0
+DIR 38;5;105
+LINK 01;38;5;111
+# MULTIHARDLINK 00
+FIFO 33
+SOCK 01;35
+# DOOR 01;44
+BLK 00;35
+CHR 01;33
+ORPHAN 00;41
+MISSING 00;45
+SETUID 37;41
+SETGID 30;43
+#CAPABILITY 30;41
+STICKY_OTHER_WRITABLE 30;42
+OTHER_WRITABLE 34;42
+STICKY 37;44
 EXEC 01;38;5;154
 # }}}
-# FILE TYPE BASED {{{
-# List any file extensions like '.gz' or '.tar' that you would like ls
-# to colorize below. Put the extension, a space, and the color init string.
-# (and any comments you want to add after a '
-# If you use DOS-style suffixes, you may want to uncomment the following:
-      .cmd 00;32
-      .exe 00;32
-      .com 00;32
-      .btm 00;32
-      .bat 00;32
-# Or if you want to colorize scripts even if they do not have the
-# executable bit actually set.
-#.sh 01;32
-#.csh 01;32
-
-# archives or compressed (hotpink) {{{
-      .tar 01;38;5;197
-      .tgz 01;38;5;197
-      .arj 01;38;5;197
-      .taz 01;38;5;197
-      .lzh 01;38;5;197
-      .lzma 01;38;5;197
-      .tlz 01;38;5;197
-      .txz 01;38;5;197
-      .zip 01;38;5;197
-      .ZIP 01;38;5;197
-      .z 01;38;5;197
-      .Z 01;38;5;197
-      .dz 01;38;5;197
-      .gz 01;38;5;197
-      .lz 01;38;5;197
-      .xz 01;38;5;197
-      .bz2 01;38;5;197
-      .bz 01;38;5;197
-      .tbz 01;38;5;197
-      .tbz2 01;38;5;197
-      .tz 01;38;5;197
-      .deb 01;38;5;197
-      .rpm 01;38;5;197
-      .jar 01;38;5;197
-      .war 01;38;5;197
-      .ear 01;38;5;197
-      .sar 01;38;5;197
-      .rar 01;38;5;197
-      .ace 01;38;5;197
-      .zoo 01;38;5;197
-      .cpio 01;38;5;197
-      .7z 01;38;5;197
-      .rz 01;38;5;197
+# archive {{{
+.tar  38;5;197;1
+.tgz  38;5;197;1
+.lzma 38;5;197;1
+.zip  38;5;197;1
+.gz   38;5;197;1
+.lz   38;5;197;1
+.xz   38;5;197;1
+.bz   38;5;197;1
+.bz   38;5;197;1
+.tbz  38;5;197;1
+.tbz  38;5;197;1
+.tz   38;5;197;1
+.deb  38;5;197;1
+.jar  38;5;197;1
+.rar  38;5;197;1
+.7z   38;5;197;1
 # }}}
-# backup and temporary files (lightgray) {{{
-   *~ 01;30
-      *- 01;30
-      .old 01;30
-      .OLD 01;30
-      .bak 01;30
-      .BAK 01;30
-      .back 01;30
-      .dpkg-old 01;30
-      .swp 01;30
-      .swo 01;30
-      .swn 01;30
-      .aux 01;30
-      .bbl 01;30
-      .glo 01;30
-      .gls 01;30
-      .ind 01;30
-      .idx 01;30
-      .blg 01;30
+# backup/temp {{{
+*~   38;5;242
+*-   38;5;242
+.swp 38;5;242
+.swo 38;5;242
+.swn 38;5;242
 # }}}
-# system libraries, etc. () {{{
-   .so 00;33
-      .o 00;33
-      .a 00;33
-      .dll 00;33
-      .rbc 00;33
-      .pyc 00;33
-      .class 00;33
+# compilied {{{
+.so    38;5;220;1
+.o     38;5;220;1
+.a     38;5;220;1
+.out   38;5;220;1
+.rbc   38;5;220;1
+.pyc   38;5;220;1
+.pyo   38;5;220;1
+.class 38;5;220;1
+.dex   38;5;220;1
 # }}}
+# document {{{
+*README       33;1
+*LICENSE      33;1
+*COPYING      33;1
+*INSTALL      33;1
+*COPYRIGHT    33;1
+*AUTHORS      33;1
+*HISTORY      33;1
+*CONTRIBUTORS 33;1
+*PATENTS      33;1
+*VERSION      33;1
+*NOTICE       33;1
+*CHANGES      33;1
+.md           33;1
+.markdown     33;1
+.rst          33;1
+.txt          33;1
 # }}}
-*README               38;5;220;1
-*LICENSE              38;5;220;1
-*COPYING              38;5;220;1
-*INSTALL              38;5;220;1
-*COPYRIGHT            38;5;220;1
-*AUTHORS              38;5;220;1
-*HISTORY              38;5;220;1
-*CONTRIBUTORS         38;5;220;1
-*PATENTS              38;5;220;1
-*VERSION              38;5;220;1
-*NOTICE               38;5;220;1
-*CHANGES              38;5;220;1
-.md                   38;5;220;1
-.log                  38;5;190
+# shell {{{
+.awk        38;5;197;1
+.bash       38;5;197;1
+.sed        38;5;197;1
+.sh         38;5;197;1
+.csh        38;5;197;1
+.zsh        38;5;197;1
+.dircolors  38;5;197;1
+.dir_colors 38;5;197;1
+.sample     38;5;197;1
+*zsh* 38;5;197;1
+# }}}
+# config {{{
+.irbrc     38;5;197
+.zshrc     38;5;197
+.vimrc     38;5;197
+.bashrc    38;5;197
+*conf      38;5;197
+.gitconfig 38;5;197
+.git-credentials 38;5;197
+.json 38;5;197
+# }}}
+# secondary config {{{
+.zlogout 38;5;202
+.zfunctions 38;5;202
+.zprompt 38;5;202
+.ini 38;5;202
+.local 38;5;202
+# }}}
+# code {{{
+.cpp  38;5;95;1
+.h    38;5;95;1
+.c    38;5;95;1
+.py   38;5;95;1
+.rb   38;5;95;1
+.java 38;5;95;1
+.lua  38;5;95;1
+.el   38;5;95;1
+.cl   38;5;95;1
+.hxx  38;5;95;1
+.hpp  38;5;95;1
+.vim  38;5;95;1
+.vifm 38;5;95;1
+.qml  38;5;95;1
+# }}}
+# web {{{
+.css  38;5;98;1
+.erb  38;5;98;1
+.htm  38;5;98;1
+.html 38;5;98;1
+.js   38;5;98;1
+.scss 38;5;98;1
+.sass 38;5;98;1
+.php  38;5;98;1
+# }}}
+# image {{{
+.jpg  38;5;67
+.png  38;5;67
+.svg  38;5;67
+.jpeg 38;5;67
+.bmp  38;5;67
+.ico  38;5;67
+.gif  38;5;67
+# }}}
+# video {{{
+.avi 38;5;105;1
+.mp4 38;5;105;1
+.mov 38;5;105;1
+.wmv 38;5;105;1
+.webm 38;5;105;1
+.mkv 38;5;105;1
+# }}}
+# audio {{{
+.mp3 38;5;95;1
+.m4a 38;5;95;1
+.wav 38;5;95;1
+.ogg 38;5;95;1
+.agg 38;5;95;1
+# }}}
+# misc {{{
+.log 38;5;242
+*history 38;5;242
+.targets 38;5;242
+# }}}
 
-.awk                  38;5;197;1
-.bash                 38;5;197;1
-.bat                  38;5;197;1
-.BAT                  38;5;197;1
-.sed                  38;5;197;1
-.sh                   38;5;197;1
-.zsh                  38;5;197;1
-.vim                  38;5;197;1
-
-.js 38;5;197;1
-.css 38;5;197;1
-
-.cpp 38;5;197;1
-.h 38;5;197;1
-.c 38;5;197;1
-
-.py 38;5;197;1
-.rb 38;5;197;1
-.js 38;5;197;1
-.js 38;5;197;1
-.js 38;5;197;1
-# vim:fdm=marker:fdl=0
+# vim: fdm=marker:fdl=0:ft=dircolors

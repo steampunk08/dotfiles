@@ -1,7 +1,7 @@
 # Author: Siphesihle Mhlongo
 # Personal Prompt
 
-prompt_steamline_setup() {
+prompt_todo() {
    TODO=$(ruby -e "
    if File.size('$HOME/.todo') < 2
       puts '  * you current have no todo\'s'
@@ -11,9 +11,13 @@ prompt_steamline_setup() {
       end
    end
    ")
+   echo $TODO
+}
+
+prompt_steamline_setup() {
    export PS1="
-%F{105}Sphe M%f [ %F{111}%~%f ]
-%B%F{242}$TODO%f%b
+%F{105}Sphe M%f [ %F{111}%2d%f ]
+%F{245}$(prompt_todo)%f
 -%f%(!.#.$) "
 
    export PS2="  %F{111}>%f "
@@ -22,7 +26,7 @@ prompt_steamline_setup() {
    export PS5="  %F{111}>%f "
 }
 
-prompt_opts=(cr subst percent)
+prompt_opts=(cr subst percent sp)
 prompt_steamline_setup
 
 # vim: ft=zsh

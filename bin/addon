@@ -1,0 +1,70 @@
+#!/usr/bin/zsh
+
+# colour configurations
+NORMAL_C=%b%F{95}
+DIR_C=%F{105}%B
+FILE_C=%F{154}%B
+
+function show_usage() { 
+   echo "run scripts under \$ADDONS_FOLDER using patterns"
+   echo "using patterns to match script names"
+   echo
+   echo "Usage: addon [options] [pattern]"
+   echo
+   echo "Options"
+   echo "    -d ARG, change addon look up directory to ARG"
+   echo "    -h, display this message" 
+   echo 
+   echo "Addon script written by Sphe M"
+   exit 1
+}
+
+while getopts "d:xh" option; do
+   case $option in
+      d ) shift $(($OPTIND - 1)) argv
+          if [ -d $OPTARG ]; then
+             ADDONS_FOLDER=$OPTARG
+          else
+             print -P "${DIR_C}$OPTARG${NORMAL_C} doesn't exist%b%f"
+             exit 1
+          fi ;;
+      h ) show_usage ;;
+      * ) show_usage ;;
+   esac
+done
+
+if [[ -z $ADDONS_FOLDER ]]; then
+   ADDONS_FOLDER=~/addons
+fi
+
+{
+   AVAILABLE_ADDONS=($ADDONS_FOLDER/*.addon) 2> /dev/null
+} always {
+   if [ $? -ne 0 ]; then
+      print -P ${NORMAL_C}no ${FILE_C}.addon${NORMAL_C} files \
+         found in ${DIR_C}$ADDONS_FOLDER%b%f
+      exit 1
+   fi
+}
+
+for addon in $AVAILABLE_ADDONS; do
+   if [[ $addon =~ $1 ]]; then
+      if [ ${#argv} -eq 1 ]; then
+         $addon 2> /dev/null
+         if [ $? -ne 0 ]; then
+            source $addon
+            [ $? -ne 0 ] && FILE_NOT_FOUND=1
+         fi
+      else
+         $addon ${argv:2} 2> /dev/null
+         if [ $? -ne 0 ]; then
+            source $addon ${argv:2}
+            [ $? -ne 0 ] && FILE_NOT_FOUND=1
+         fi
+      fi
+      exit 1
+   fi
+done
+
+print -P ${NORMAL_C}addon matching ${FILE_C}$1${NORMAL_C} not \
+ found in ${DIR_C}$ADDONS_FOLDER%b%f
