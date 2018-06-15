@@ -1,0 +1,28 @@
+# bindings for colemak: https://github.com/bunnyfly/dotfiles/blob/master/lesskey
+# http://linux.die.net/man/1/lesskey
+# have to lesskey ~/.lesskey to change bindings
+#command
+k		back-line
+j		forw-line
+
+N		forw-line-force
+E		back-line-force
+
+\e		forw-screen
+\y		back-screen
+
+/		forw-search
+?		back-search
+k		repeat-search
+K		reverse-search
+
+gg		goto-line
+G		goto-end
+%		percent
+
+#line-edit
+\t forw-complete
+
+#env
+# use smart case
+LESSCHARSET = utf-8

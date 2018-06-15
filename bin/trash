@@ -1,0 +1,82 @@
+#!/usr/bin/zsh
+
+export TRASH_DIR=$HOME/.trash
+export TRASH_INDEX=$TRASH_DIR/.trash.index
+export TRASH_INDEX_TEMP=${TRASH_INDEX}.tmp
+
+show_usage() {
+   cat <<USAGE 
+Usage: trash [options] [args]
+
+Commands
+    add    FILENAME(S)  add files to \$TRASH_DIR this also adds an
+                         entry to the \$TRASH_INDEX file.
+    empty  [ PATTERN ]  delete all files in \$TRASH_DIR, if PATTERN
+                         is not given. Otherwise all files matching
+                         PATTERN (a standard asterisk glob pattern)
+                         are deleted.
+    remove [ -d DIR ] FILENAME(S) remove files from \$TRASH_DIR. If
+                                   DIR is given files are moved to
+                                   DIR. Otherwise the files are
+                                   returned to the directory in which
+                                   they were put into \$TRASH_DIR from.
+    help                show this message
+USAGE
+}
+
+usage_on_error() {
+   show_usage
+   exit 1
+}
+
+DUMY_TRASH_INDEX=$TRASH_INDEX
+
+write_trash_entry() {
+   echo $(realpath $1) >> $DUMY_TRASH_INDEX
+}
+
+strip_trash_entry() {
+   local IFS="
+"
+   for entry in $(cat $TRASH_INDEX); do
+      if [[ $(basename $entry) != $1 ]]; then
+         DUMY_TRASH_INDEX=$TRASH_INDEX_TEMP
+         write_trash_entry $entry
+      fi
+   done
+   DUMY_TRASH_INDEX=$TRASH_INDEX
+   mv $TRASH_INDEX_TEMP $TRASH_INDEX
+}
+
+add_to_trash() {
+   mv $@ $TRASH_DIR
+   for entry in $@; do
+      write_trash_entry $entry
+   done
+}
+
+remove_from_trash() {
+   mv $TRASH_DIR/$1 $2
+   strip_trash_entry $1
+}
+
+# remove_from_trash_bulk() {
+#}
+
+case $1 in
+   add )
+      if [[ -z $2 ]]; then
+         usage_on_error
+      fi
+      add_to_trash ${argv:2} ;;
+
+   empty ) echo emptying ;;
+   remove )
+      if [[ $2 = "-d" ]] && [[ -n $3 ]]; then
+         [ -d $3 ] && DIR=$3 || exit 1
+      fi ;;
+   help ) show_usage ;;
+esac
+
+#strip_trash_entry Packages.1
+#write_trash_entry $1

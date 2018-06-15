@@ -10,6 +10,7 @@
 	set = config --global
    edit = config --global -e
 	rmdir = rm -r --cached
+; steampunklights git theme
 [color "status"]
 	updated = 197
    changed = 197

@@ -219,12 +219,12 @@ endfunction
 " Build {{{
 function! Build()
    let build_maps = {
-      \ "ruby": "ruby",
-      \ "python": "python2",
-      \ "javascript": "node",
-      \ "zsh": "zsh",
-      \ "sh": "bash",
-      \ }
+            \ "ruby": "ruby",
+            \ "python": "python2",
+            \ "javascript": "node",
+            \ "zsh": "zsh",
+            \ "sh": "bash",
+            \ }
 
    let buildCmd = "source"
    for [ lang, cmd ] in items(build_maps)
@@ -261,7 +261,6 @@ function! QuickRun(force_register)
    let save_a = @a
    execute "normal! mp0\"ay$`p:\<c-r>a\<cr>"
    let @a = save_a
-
 endfunction
 
 nnoremap <localleader><localleader> :call QuickRun('')<cr>
@@ -269,31 +268,46 @@ nnoremap <localleader><localleader> :call QuickRun('')<cr>
 " GetSynname {{{
 nnoremap yid :let [@", @h] = [SynName(), SynName()]<cr>
 " }}}
-" Colourize  (colorscheme tease) {{{
-function! Colourize(name)
-   let counter = 0
-   while v:true
-      let counter += 1
-      execute "hi " . a:name . " ctermfg=" . counter
+" Colourize (colorscheme tease) {{{
+command! -nargs=* -bang Colourize call Colourize(<f-args>, <bang>0)
+
+function! Colourize(...)
+   let g:counter = 0
+   let g:name = a:1
+   if a:0 > 2
+      echoerr 
+   function! Callback(timer)
+      let g:counter += 1
+      execute "hi " . g:name . " ctermfg=" . g:counter
       redraw!
       sleep 200m
-      if counter > 249
-         let counter = 0
+      if g:counter > 249
+         let g:counter = 0
       endif
-   endwhile
+   endfunction
+   if a:0 ==
+   let colourize = timer_start(1, funcref("Callback"), {'repeat': -1})
 endfunction
 " }}}
 " Tease (colorcheme tease) {{{
+command! Tease call Tease()
+let g:tease_color_num = 111
+
 function! Tease()
    while v:true
-      let var = input("> ")
-      execute "hi " . var . " ctermfg=196"
+      silent let var = input("> ")
+      if empty(var)
+         echo 'Teasing done !'
+         return
+      endif
+      execute "hi " . var . " ctermfg=" . g:tease_color_num
       redraw!
       sleep 500m
    endwhile
 endfunction
 " }}}
 " Reformat CSS {{{
+command! ReformatCSS call ReformatCSS()
 function! ReformatCSS()
    echo "re-formatting..."
    %s/{/{/g
@@ -302,6 +316,45 @@ function! ReformatCSS()
    redraw!
    normal! gg=G
    echo "done re-formatting!"
+endfunction
+" }}}
+" Tabe Buffers {{{
+command! TabeBuffers call TabeBuffers() 
+" FIXME
+"function! CompareBufs(num, bufname)
+   "if bufname(a:num) == a:bufname
+      "return v:true
+   "endif
+"endfunction
+
+"function! BufAlreadyOpened(bufname)
+"for i in range(tabpagenr('$'))
+   "let tabbufs = tabpagebuflist(i)
+   "if type(tabbufs) == type([])
+      "for tabbufnum in tabbufs
+         "return CompareBufs(tabbufnum, a:bufname)
+      "endfor
+   "endif
+   "return CompareBufs(tabbufs, a:bufname)
+"endfor
+"endfunction
+
+function! TabeBuffers()
+   for Buffer in split(execute("buffers"), '\n')
+      let bufname = split(Buffer, '"')[1]
+      let bufstr  = substitute(Buffer, '\v +', '', 'g')
+
+      if match(bufstr, '\d"') >= 0
+         echo bufstr
+         " call setline(352, bufstr)
+         echo bufname
+         execute 'tabe ' . bufname
+      endif
+      " 57%a"~/.vimrc"line347
+      "if ! BufAlreadyOpened(bufname)
+         execute 'tabe ' . bufname
+      "endif
+   endfor
 endfunction
 " }}}
 " }}}
@@ -368,6 +421,7 @@ augroup SETTING_FILETYPES
    autocmd BufNewFile,BufRead prompt_*_setup setfiletype zsh
    autocmd BufNewFile,BufRead *.vifm setfiletype vim
    autocmd BufNewFile,BufRead *.fish setfiletype zsh
+   autocmd BufNewFile,BufRead crontabs.* setfiletype crontab
 augroup END
 
 if !has('gui_running')
@@ -458,26 +512,7 @@ call vundle#end()
 filetype plugin indent on
 " }}}
 " nerd commenter {{{
-map =c -c<space>
-" }}}
-" nead tree {{{
-" }}}
-" tbone {{{
-" }}}
-" lightline {{{
-" let g:lightline = { 'colorscheme': 'jellybeens' }
-" let g:lightline.component = {}
-" let g:lightline.component.readonly = "%{&readonly ? '' : ''}"
-" let g:lightline.component.higroup = "%{StatuslineCurrentHighlight()}"
-
-"let g:lightline.active = {}
-"let g:lightline.active.left = [
-   "\ ["mode", "paste"],
-   "\ ["readonly", "filename", "modified"],
-   "\ ["higroup"],
-"\ ]
-
-"let s:p.normal.left = [
+nmap <localleader>c <plug>NERDCommenterToggle
 " }}}
 " startify {{{
 let g:startify_change_to_dir = 0
@@ -486,6 +521,7 @@ let g:startify_bookmaks = [
    \ { '-': '~/vim-steampunklights/colors/steampunklights.vim' }
 \ ]
 
+" FIXME: correct and make it work
 function! StartifyOnUnamedBuffer()
    if expand('%') == "" && getfsize(expand('%:p')) > -1
       Startify
@@ -493,7 +529,7 @@ function! StartifyOnUnamedBuffer()
 endfunction
 
 let g:startify_padding_left = 3
-let g:startify_custom_indices = map(range(97, 105), 'nr2char(v:val)')
+let g:startify_custom_indices = range(0, 10)
 let g:startify_custom_header = startify#fortune#boxed()
 let g:startify_custom_footer =
    \ ['', "Vim is charityware. Please read ':help uganda'.", '']

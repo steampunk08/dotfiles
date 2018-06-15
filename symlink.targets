@@ -1,5 +1,17 @@
-$(soft)
-.termux .shortcuts .vifm .vim addons bin 
+--SOFT--
+.termux
+.shortcuts
+.vifm
+.vim
+addons
+bin
+zsource
+crontabs
 
-$(hard)
-.bashrc .vimrc .zshrc .tmux.conf .gitconfig .zprompt
+--HARD--
+.bashrc
+.vimrc
+.zshrc
+.tmux.conf
+.gitconfig
+.lesskey

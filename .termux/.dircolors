@@ -151,13 +151,10 @@ EXEC 01;38;5;154
 .gitconfig 38;5;197
 .git-credentials 38;5;197
 .json 38;5;197
+.lesskey 38;5;197
 # }}}
 # secondary config {{{
-.zlogout 38;5;202
-.zfunctions 38;5;202
-.zprompt 38;5;202
 .ini 38;5;202
-.local 38;5;202
 # }}}
 # code {{{
 .cpp  38;5;95;1
@@ -211,7 +208,9 @@ EXEC 01;38;5;154
 # }}}
 # misc {{{
 .log 38;5;242
-*history 38;5;242
+*history 38;5;241
+*hst 38;5;241
+*hsts 38;5;241
 .targets 38;5;242
 # }}}
 

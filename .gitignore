@@ -1,5 +1,7 @@
+setup-scripts/
 *.sw[pon]
 *~
-.netrwhist
-.vim/bundle/**/.git/
 *info
+.netrwhist
+**/.git/
+crontabs/cron.update

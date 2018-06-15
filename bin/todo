@@ -6,7 +6,7 @@
 function show_usage() { 
    echo "script to manage todo's in \$TODO_PATH"
    echo
-   echo "Usage: todo [options] [message]"
+   echo "Usage: todo [option] [message]"
    echo
    echo "Options"
    echo "    -c, clear the todo file before writing [message]"

@@ -1,0 +1,4 @@
+#!/usr/bin/sh
+
+termux-wake-lock
+crond -c /data/data/com.termux/files/home/crontabs

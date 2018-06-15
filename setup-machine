@@ -1,98 +1,113 @@
 #!/usr/bin/zsh
 
 PACKAGES=(
-   coreutils binutils diffutils
-   play-audio ruby
-   zsh zip poppler
-   dx ecj clang
-   termux-exec termux-tools vim-python
-   termux-api termux-am busybox
-   bc bash curl
-   man make nodejs
-   python python2 tmux
-   tar util-linux vifm
-   w3m wget weechat
+   bc busybox clang coreutils
+   curl diffutils dx ecj make
+   man nodejs python python2
+   ruby termux-am termux-api
+   termux-exec termux-tools
+   tmux util-linux vifm vim-python
+   wget zip zsh
 )
 
 EXTRA_PACKAGES=(
-   figlet fortune fish
-   htop cmatrix toilet
-   tree sqlite xz-utils
-   ctags
+   cmatrix ctags figlet
+   fish htop sqlite
+   toilet tree xz-utils
 )
+OLD_DIRECTORY=$(pwd)
+# directory where setup scripts are generated
+SCRIPTS_DIRECTORY=$(realpath ${0:h})/setup-scripts
 
-function DOWNLOAD-PACKAGES
-{
-   print -P %F{95}downloading packages: $@%f && echo
-   sleep 3
-   for pack in $@; do
-      print -P %F{154}%B $pack%b%f
+DOWNLOAD_SCRIPT_NAME=download.zsh
+EXTRAS_SCRIPT_NAME=extras.zsh
+SYMLINK_SCRIPT_NAME=symlink.zsh
 
-      echo -en "\e[38;5;241m"
-      apt install $pack
-      echo -en "\e[0m"
+SYMLINK_TARGET_FILE=symlink.targets
+SYMLINK_DESTINATION=$HOME/hello
 
-      sleep 0.3
-   done
-}
+if [ ! -d $SCRIPTS_DIRECTORY ]; then
+   mkdir $SCRIPTS_DIRECTORY
+   print -P directory $(EM $SCRIPTS_DIRECTORY) was created.
+fi
+cd $SCRIPTS_DIRECTORY
 
-DOTFILES_DIR=${0:h}
-
-if [[ $PWD != $DOTFILES_DIR ]]; then
-   cd $DOTFILES_DIR
+if [ ! -d $SYMLINK_DESTINATION ]; then
+   mkdir $SYMLINK_DESTINATION
+   print -P directory $(EM $SYMLINK_DESTINATION) was created.
 fi
 
-function LINK-FILES
-{
-   FILES=(.* bin)
-   for file in $FILES; do
-      for ignore in $@; do
-         [[ $file = $ignore ]] && SKIP="yes"
-      done
-      if [[ ! -z $SKIP ]]; then
+IFS_SAVE=$IFS
+
+EM() {
+   echo %F{105}%B$1%b%f
+}
+write() {
+   echo ${argv:2} >> $1 
+}
+
+init-shebang() {
+   echo '#!/usr/bin/zsh' > $1
+}
+
+apt-packages() {
+   output_filename=$1 && shift 1 argv
+   init-shebang $output_filename
+
+   write $output_filename apt update '&& apt upgrade'
+   write $output_filename apt install $@
+
+   print -P ${(r:30::.:)$(EM $output_filename)}generated !
+}
+
+symlink-files() {
+   init-shebang $1
+
+   if [ ! -f ../$SYMLINK_TARGET_FILE ]; then
+      print -P $(EM $SYMLINK_TARGET_FILE) does not exist !
+   fi
+   IFS="
+"
+   for target in $(cat ../$SYMLINK_TARGET_FILE); do
+      if [[ ${target:0:2} = '--' ]]; then
+         LINK_TYPE=${target:2:-2}
          continue
-      fi && SKIP=""
-      if [ ! -f $HOME/$file ] && [ ! -d $HOME/$file ]; then
-         if [ -f $file ]; then
-            link $file $HOME/$file
-         elif [ -d $file ]; then
-            ln -s $file $HOME/$file
-         fi
-      else
-         print -P %F{197}$HOME/$file exists%f
       fi
+
+      # the sed substitution is for handling multiple files
+      # on one line in the 'symlink.targets' file
+      for file in $(echo $target | sed "s/ /\n/g"); do
+         write $1 "if [ ! -f $SYMLINK_DESTINATION/$file ] || [ ! -d $SYMLINK_DESTINATION/$file ]; then"
+
+         if [[ $LINK_TYPE = "HARD" ]]; then
+            write $1 "   ln -P ../$file $SYMLINK_DESTINATION\nfi"
+            continue
+         fi
+         write $1 "   ln -s ../$file $SYMLINK_DESTINATION\nfi"
+      done
+   done
+   print -P ${(r:30::.:)$(EM $SYMLINK_SCRIPT_NAME)}generated !
+   IFS=$IFS_SAVE
+}
+run-setup-scripts() {
+   for file in $SCRIPTS_DIRECTORY/*; do
+      source $file
+      echo $file
    done
 }
 
-alias write="print -P %F{105}%B"
+main() {
+   apt-packages ${DOWNLOAD_SCRIPT_NAME} ${PACKAGES}
+   apt-packages ${EXTRAS_SCRIPT_NAME} ${EXTRA_PACKAGES}
 
-function main {
-   write upgrading & updating...%b%f
-   apt update && apt upgrade
+   write ${EXTRAS_SCRIPT_NAME} gem install lolcat
+   write ${EXTRAS_SCRIPT_NAME} git clone http://github.com/steampunk08/vim-steampunklights ~/vim-steampunklights
 
-   PRINT downloading essential packages...%b%f
-   DOWNLOAD-PACKAGES ${PACKAGES[*]}
+   symlink-files ${SYMLINK_SCRIPT_NAME}
 
-   if [[ $1 = "--with-extras" ]]; then
-      PRINT downloading extra packages...%b%f
-      DOWNLOAD-PACKAGES ${EXTRA_PACKAGES[*]}
-
-      print -P %F{197}%Bfetching vim plugins...%b%f
-      if [ ! -d ~/vim-bundle ]; then
-         mkdir ~/vim-bundle
-         source 
-      fi
-   fi
-
-   if [ ! -d ~/dotfiles ]; then
-      PRINT fetching resources...%b%f
-      git clone https://github.com/steampunk08/dotfiles ~/dotfiles
-   fi
-
-   EXCEPT=(.gitignore .git)
-   PRINT linking config files...%b%f
-
-   LINK-FILES ${EXCEPT[*]}
+   run-setup-scripts
+   print "remember to run :PluginInstall! in vim"
+   cd ${OLD_DIRECTORY}
 }
 
-main $@
+main
