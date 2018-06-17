@@ -17,7 +17,7 @@ extract:
       interactive terminal.  This helps in reviewing commands before running
       them, particularly in catching syntax errors.
 
-Github url: [zsh-syntax-highlighing][zsh-syntax-highlighing-link]
+Github url: [zsh-syntax-highlighing][zsh-syntax-highlighing]
 
 zsh-autosuggestions 
 -------------------
@@ -25,7 +25,7 @@ zsh-autosuggestions
 extract:
       It suggests commands as you type, based on command history.
 
-Github url: [zsh-autosuggestions][zsh-autosuggestions-url]
+Github url: [zsh-autosuggestions][zsh-autosuggestions]
 
 zsh-completions
 ---------------
@@ -37,6 +37,6 @@ extract:
 
 Github url: [zsh-completions][zsh-completions]
       
-[zsh-syntax-highlighing-url]: https://github.com/zsh-users/zsh-syntax-highlighting
-[zsh-autosuggestions-url]: https://github.com/zsh-users/zsh-autosuggestions
+[zsh-syntax-highlighing]: https://github.com/zsh-users/zsh-syntax-highlighting
+[zsh-autosuggestions]: https://github.com/zsh-users/zsh-autosuggestions
 [zsh-completions]: https://github.com/zsh-users/zsh-completions/
