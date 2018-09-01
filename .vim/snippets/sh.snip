@@ -1,0 +1,13 @@
+snippet #!
+   #!/usr/bin/bash
+   ${0}
+
+snippet if
+   if [${0}]; then
+      ${1}
+   fi
+
+snippet for
+   for ${0:var} in ${1:$@}; do
+      ${2}
+   done

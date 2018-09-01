@@ -1,0 +1,51 @@
+#!/usr/bin/zsh
+
+SCRIPT_NAME=$(basename $0)
+case $1 in
+   -C | --clean )
+      if [[ -n $(ls | grep .class) ]]; then
+         rm *.class &> /dev/null
+      fi
+      if [[ -n $(ls | grep .dex) ]]; then
+         rm *.dex
+      fi
+      exit ;;
+   -c | --class ) CLASSNAME=$2
+      shift 2
+      if [[ $1 =~ '(-k|--keep)' ]]; then
+         KEEP_DEX_FILE=1
+         shift 1
+      fi
+      ;;
+esac
+
+declare -a FILE_NAMES=(${argv[*]})
+
+error() { print -P ${SCRIPT_NAME}: $@ }
+
+if [[ -z ${FILE_NAMES[*]} ]]; then
+   if [ -f $CLASSNAME.class ]; then
+      DEX_FILE=$CLASSNAME.dex
+      dx --dex --output=$CLASSNAME.dex $CLASSNAME.class
+   else
+      error "No class file called '$CLASSNAME.class'"
+      exit 1
+   fi
+else
+   if [ ${#FILE_NAMES} -eq 1 ] && [[ $FILE_NAMES =~ '\.dex$' ]]; then
+      DEX_FILE=$FILE_NAMES
+   else
+      DEX_FILE=classes.dex
+      dx --dex --output=$DEX_FILE ${FILE_NAMES[*]}
+   fi
+fi
+
+# if [[ -z $KEEP_DEX_FILE ]]; then
+   # cp $DEX_FILE $DEX_FILE.bak
+# fi
+dalvikvm -classpath $DEX_FILE $CLASSNAME
+if [[ -z $KEEP_DEX_FILE ]]; then
+   rm $DEX_FILE
+fi
+
+

@@ -24,7 +24,7 @@ EXTRAS_SCRIPT_NAME=extras.zsh
 SYMLINK_SCRIPT_NAME=symlink.zsh
 
 SYMLINK_TARGET_FILE=symlink.targets
-SYMLINK_DESTINATION=$HOME/hello
+SYMLINK_DESTINATION=$HOME
 
 if [ ! -d $SCRIPTS_DIRECTORY ]; then
    mkdir $SCRIPTS_DIRECTORY
@@ -90,10 +90,23 @@ symlink-files() {
    IFS=$IFS_SAVE
 }
 run-setup-scripts() {
-   for file in $SCRIPTS_DIRECTORY/*; do
-      source $file
-      echo $file
-   done
+   case $1 in
+      --all )
+         for file in $SCRIPTS_DIRECTORY/*; do
+            source $file
+            echo $file
+         done
+         ;;
+      --with-extras )
+         source $SCRIPTS_DIRECTORY/extras.zsh
+         ;;
+      --with-symlinks )
+         source $SCRIPTS_DIRECTORY/symlink.zsh
+         ;;
+      --width-downloads )
+         source $SCRIPTS_DIRECTORY/download.zsh
+         ;;
+   esac
 }
 
 main() {

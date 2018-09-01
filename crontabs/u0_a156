@@ -1,9 +1,11 @@
-# cron format
-# min hour dayn monthn dayofweek command
+# Crontab format:
+# min hour dayNum month dayOfWeek commands
 
 12 4 * * * play-audio /storage/sdcard1/LawOfAttraction/AbundanceAudio1master.mp3
 #*/3 * * * * play-audio /storage/sdcard1/Music/sia_helium_lyrics_mp3_8209.mp3
 #45 21 * * * play-audio /storage/sdcard1/Music/lsd_audio_ft._sia_diplo_labrinth_mp3_14138.mp3
-0 */6 * * * fortune > $HOME/.fortune
+*/30 * * * * backup
+0 12 */2 * * backup --all
+
 
 # vim: ft=crontab

@@ -1,4 +1,4 @@
 #!/usr/bin/bash
 
 mkdir -p $HOME/downloads/$@
-git clone "https://github.com/${@}" $HOME/downloads/$@
+git clone "https://github.com/${@}" $HOME/$@

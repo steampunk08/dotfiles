@@ -1,0 +1,9 @@
+#!/usr/bin/bash
+
+if [ -z $DEBS_DIRECTORY ]; then
+   DEBS_DIRECTORY=$EXTCARD/Android/data/com.termux/.debs
+fi
+
+for file in $@; do
+   dpkg --install $DEBS_DIRECTORY/${file}_*
+done

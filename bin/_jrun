@@ -1,0 +1,9 @@
+#compdef jrun
+
+_arguments -C '*::command:->files'
+
+CLASS_FILES=($(ls *.class | sed s/\.class//g))
+
+case $state in
+   (files) _describe -t commands "classes found" CLASS_FILES ;;
+esac

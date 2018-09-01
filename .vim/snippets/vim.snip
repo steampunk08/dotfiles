@@ -1,0 +1,54 @@
+snippet aug
+abbr augroup
+   augroup ${1:GROUP_NAME}
+      ${0}
+   augroup END
+
+snippet au
+abbr autocmd
+   autocmd ${1:Filetype} ${2:filetype} ${0:commands}
+
+snippet nerdmenu
+abbr call NERDTreeAddMenuItem({})
+   call NERDTreeAddMenuItem({
+   \   'text': '${1}',
+   \   'shortcut': '${2}',
+   \   'callback': '${3}',
+   \ })
+
+snippet nerdsep
+abbr call NERDTreeAddMenuSeparator()
+   call NERDTreeAddMenuSeparator()
+
+snippet map
+   ${1}map ${0}
+
+snippet fu
+abbr function!
+alias fun func funct functi functio function
+   function! ${1:Name}(${2})
+      ${0}
+   endfunction
+
+snippet if
+   if ${1}
+      ${0}
+   endif
+
+snippet for
+abbr for i in range(n)
+   for ${1:i} in ${2:range(10)}
+      ${0}
+   endfor
+
+snippet while
+   while ${1}
+      ${0}
+   endwhile
+
+snippet try
+   try
+      ${1}
+   catch ${2:/${3\}/}
+      ${0}
+   endtry

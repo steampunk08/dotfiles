@@ -1,0 +1,12 @@
+#!/usr/bin/bash
+
+if [[ -z $DEFULT_WINDOW_NAME ]]; then
+   DEFULT_WINDOW_NAME=defualt
+fi
+
+read -p "name ($DEFULT_WINDOW_NAME): " NAME
+
+if [[ -z $NAME ]]; then
+   NAME=$DEFULT_WINDOW_NAME
+fi
+tmux new-window -n $NAME -c $PWD

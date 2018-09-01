@@ -31,6 +31,10 @@ usage_on_error() {
 
 DUMY_TRASH_INDEX=$TRASH_INDEX
 
+if [[ ! -d $TRASH_DIR ]]; then
+   mkdir -p $TRASH_DIR
+fi
+
 write_trash_entry() {
    echo $(realpath $1) >> $DUMY_TRASH_INDEX
 }

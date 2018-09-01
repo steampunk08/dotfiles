@@ -1,0 +1,3 @@
+#!/usr/bin/bash
+
+XDG_CONFIG_HOME=$HOME nvim "$@"

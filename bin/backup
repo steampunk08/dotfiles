@@ -1,0 +1,39 @@
+#!/usr/bin/bash
+
+tmux new-window -d -c $HOME -n backup -t 10 &> /dev/null
+
+BACKUP_NAME=backup-$(date "+%d_%m_%Y").zip
+TERMUX_ON_EXTCARD=$EXTCARD/Android/data/com.termux/backups
+
+if [[ -n $TERMUX_ON_EXTCARD ]] && [[ -z $DESTINATION_FOLDER ]]; then
+   DESTINATION_FOLDER=$TERMUX_ON_EXTCARD
+fi
+
+case $1 in 
+   --all )
+      BACKUP_FILES=(.)
+      SAVE_SYMLINKS=true
+
+      if [[ -z $2 && $2 =~ --save ]]; then
+         EXPORT_BACKUP=true
+      fi
+      ;;
+   * )
+      BACKUP_FILES=(dotfiles vim-steampunklights Android psuedocode.vim)
+      ;;
+esac
+
+if [ $SAVE_SYMLINKS ]; then
+   OPTIONS="-y"
+fi
+
+if [[ -n $BACKUP_FILES ]]; then
+   COMMAND="zip $OPTIONS $BACKUP_NAME -r9 ${BACKUP_FILES[*]}"
+fi
+
+if [ $EXPORT_BACKUP ]; then
+   COMMAND="mv $BACKUP_NAME $DESTINATION_FOLDER"
+fi
+
+tmux send-keys -t :10 "$COMMAND" C-m
+# tmux send-keys -t :10 "exit" C-m

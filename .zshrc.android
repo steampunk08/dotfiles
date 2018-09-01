@@ -1,0 +1,11 @@
+HOME_PATH=$HOME
+source $HOME_PATH/.zshrc.all
+
+export EXTCARD=/storage/sdcard1
+hash -d ext=$EXTCARD/Android/data/com.termux
+hash -d debs=~ext/.debs
+
+if [ ! $ZSH_MINIMAL_MODE ]; then
+   # termux spercific aliases
+   alias suicide="pkill -x com.termux"
+fi

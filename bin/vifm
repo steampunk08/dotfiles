@@ -1,0 +1,9 @@
+#!/usr/bin/bash
+
+if [[ -z $@ ]]; then
+   $PREFIX/bin/vifm .
+   echo "Opened!"
+else
+   $PREFIX/bin/vifm $@
+   echo "used other method"
+fi

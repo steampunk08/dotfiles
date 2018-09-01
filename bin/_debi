@@ -1,0 +1,9 @@
+#compdef debi
+
+_arguments -C '*::command:->filename'
+
+debs=($(ls /storage/sdcard1/Android/data/com.termux/.debs | sed s/_.\*//g))
+
+case $state in
+   filename) _describe -t commands 'local debs folder contents' debs ;;
+esac
