@@ -1,6 +1,6 @@
 #         DIRCOLORS
 # maintainer: Siphesihle Mhlongo
-#    updated: 08 Apr 2018
+#    updated: 02 Sep 2018
 # theme name: sweet spring
 
 # termcap {{{
@@ -66,13 +66,13 @@ SOCK 01;35
 # DOOR 01;44
 BLK 00;35
 CHR 01;33
-ORPHAN 00;41
+ORPHAN 48;5;197
 MISSING 00;45
 SETUID 37;41
 SETGID 30;43
 #CAPABILITY 30;41
 STICKY_OTHER_WRITABLE 30;42
-OTHER_WRITABLE 34;42
+OTHER_WRITABLE 38;5;105;1;4
 STICKY 37;44
 EXEC 01;38;5;154
 # }}}
@@ -154,23 +154,26 @@ EXEC 01;38;5;154
 .lesskey 38;5;197
 # }}}
 # secondary config {{{
-.ini 38;5;202
+.ini 38;5;220;1
+.editorconfig 38;5;220
+.zshrc.all 38;5;95
+.zshrc.android 38;5;154
 # }}}
 # code {{{
-.cpp  38;5;95;1
-.h    38;5;95;1
-.c    38;5;95;1
-.py   38;5;95;1
-.rb   38;5;95;1
-.java 38;5;95;1
-.lua  38;5;95;1
-.el   38;5;95;1
-.cl   38;5;95;1
-.hxx  38;5;95;1
-.hpp  38;5;95;1
-.vim  38;5;95;1
-.vifm 38;5;95;1
-.qml  38;5;95;1
+.cpp  38;5;95
+.h    38;5;95
+.c    38;5;95
+.py   38;5;95
+.rb   38;5;95
+.java 38;5;95
+.lua  38;5;95
+.el   38;5;95
+.cl   38;5;95
+.hxx  38;5;95
+.hpp  38;5;95
+.vim  38;5;95
+.vifm 38;5;95
+.qml  38;5;95
 # }}}
 # web {{{
 .css  38;5;98;1

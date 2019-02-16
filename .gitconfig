@@ -1,41 +1,42 @@
 [user]
-	name = Siphesihle Mhlongo
-	email = sphe0619840353@gmail.com
+	name    = Siphesihle Mhlongo
+	email   = sphe0619840353@gmail.com
 [github]
-   user = steampunk08
+   user    = steampunk08
 [core]
-	editor = vim
+	editor  = nvim
 [alias]
-	s = status
-	set = config --global
-   edit = config --global -e
-	rmdir = rm -r --cached
-; steampunklights git theme
-[color "status"]
-	updated = 197
-   changed = 197
-	added = 154
-   untracked = 105
-   branch = 105 bold
-   header = 242
-[color "diff"]
-   frag = 105
-   new = 154
-   old = 197
-   context = 242
-   whitespace = white red
-   meta = 37
-[color "branch"]
-   local = 154 bold
-   current = 105 bold
-   remote = 197 bold
-   plain = 242
-[color "decorate"]
-   branch = 105 bold
-   tag = 226
-   separator=215
-   HEAD = 197 bold
-   remoteBranch = 197 bold
-   stash=242
+	s       = status
+	set     = config --global
+   edit    = config --global -e
+	rmc     = rm --cached
 [credential]
-	helper = store
+	helper  = store
+
+; Steampunklights Git theme
+[color "status"]
+	updated         = 197
+   changed         = 197
+	added           = 154
+   untracked       = 105
+   branch          = 105 bold
+   header          = 242
+[color "diff"]
+   frag            = 105
+   new             = 154
+   old             = 197
+   context         = 242
+   whitespace      = white red
+   meta            = 37
+[color "branch"]
+   local           = 154 bold
+   current         = 105 bold
+   remote          = 197 bold
+   plain           = 242
+[color "decorate"]
+   branch          = 105 bold
+   tag             = 226
+   separator       = 215
+   HEAD            = 197 bold
+   remoteBranch    = 197 bold
+   stash           = 242
