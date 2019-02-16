@@ -1,0 +1,106 @@
+#!/usr/bin/bash
+
+# Colors
+COFFEE="\e[38;5;95m"
+BLURPLE="\e[38;5;105m"
+HOTPINK="\e[38;5;197m"
+CLEAR="\e[0m"
+CLEAR_COFFEE=${CLEAR}${COFFEE}
+CLEAR_HOTPINK=${CLEAR}${HOTPINK}
+
+# Attributes
+BOLD="\e[1m"
+
+if [ -z $1 ]; then
+   APP_DIRECTORY=$(pwd)
+elif [[ $1 =~ ".xml" ]]; then
+   APP_DIRECTORY=$(realpath $1 | sed s/AndroidManifest.xml//)
+else
+   APP_DIRECTORY=$(realpath $1)
+fi
+
+PROJECT_NAME=$(basename $APP_DIRECTORY)
+PUSH_DESTINATION=/sdcard
+JAVA_SOURCE_DIR=src
+
+BUILT_APK_NAME=${PROJECT_NAME}_$(date '+%Y%m%d').apk
+
+write() { echo -e ${COFFEE}$@${CLEAR}; }
+error() { echo -e ${HOTPINK}$@${CLEAR}; }
+
+if [ ! -f $APP_DIRECTORY/AndroidManifest.xml ]; then
+   error "build failed: ${BOLD}AndroidManifest.xml${CLEAR_HOTPINK} was not found"
+   exit 1
+fi
+
+if [ ! -d $APP_DIRECTORY/builds ]; then
+   mkdir $APP_DIRECTORY/builds
+fi
+
+if [ ! -d $APP_DIRECTORY/bin ]; then
+   mkdir $APP_DIRECTORY/bin
+else
+   \rm $APP_DIRECTORY/bin/* 2>/dev/null
+fi
+
+if [ ! -d $APP_DIRECTORY/assets ]; then
+   mkdir $APP_DIRECTORY/assets
+fi
+
+if [ ! -d $APP_DIRECTORY/gen ]; then
+   mkdir $APP_DIRECTORY/gen
+fi
+
+aapt package -v -f -m --shared-lib \
+             -M $APP_DIRECTORY/AndroidManifest.xml \
+             -I $PREFIX/share/java/android.jar \
+             -I $PREFIX/share/java/android-21.jar \
+             -J $APP_DIRECTORY/$JAVA_SOURCE_DIR \
+             -S $APP_DIRECTORY/res
+
+if [ $? -eq 0 ]; then
+   ecj -cp ./gdx.jar:./gdx-backend-android.jar -nowarn -d $APP_DIRECTORY/gen $APP_DIRECTORY/**/*.java
+else
+   error "build failed: ${BOLD}aapt${CLEAR_HOTPINK} terminated with exit code $?"
+   exit 1
+fi
+
+if [ $? -eq 0 ]; then
+   dx --dex --verbose --output=$APP_DIRECTORY/bin/classes.dex $APP_DIRECTORY/gen
+else
+   error "build failed: ${BOLD}ecj${CLEAR_HOTPINK} terminated with exit code $?"
+   exit 1
+fi
+
+if [ $? -eq 0 ]; then
+   aapt package -v -f \
+      -M $APP_DIRECTORY/AndroidManifest.xml \
+      -S $APP_DIRECTORY/res \
+      -A $APP_DIRECTORY/assets \
+      -F $APP_DIRECTORY/bin/$PROJECT_NAME.apk
+else
+   error "build failed: ${BOLD}dx${CLEAR_HOTPINK} terminated with exit code $?"
+   exit 1
+fi
+
+if [ $? -eq 0 ]; then
+   cd $APP_DIRECTORY/bin
+   write "adding ${BLURPLE}${BOLD}classes.dex${CLEAR_COFFEE} to the apk"
+   echo aapt add -f $PROJECT_NAME.apk classes.dex
+
+   write "signing the apk"
+   echo apksigner $PROJECT_NAME.key $PROJECT_NAME.apk ../builds/$BUILT_APK_NAME
+   write "built and signed ${BLURPLE}$(echo $APP_DIRECTORY)/builds/${BOLD}${BUILT_APK_NAME}"
+   cd $OLDPWD
+else
+   error "build failed: ${BOLD}aapt${CLEAR} terminated with exit code $?"
+   exit 1
+fi
+
+# write "Would you like push the app to ${BLURPLE}${PUSH_DESTINATION}${COFFEE} ? [Y/n] "
+# read input
+
+# if [[ $input =~ "(y|Y)(es)?" ]]; then
+cp $APP_DIRECTORY/builds/$BUILT_APK_NAME $PUSH_DESTINATION
+   # write 'Pushed!'
+# fi

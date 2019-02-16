@@ -1,0 +1,76 @@
+#!/bin/bash
+# author: Sphe M
+# created: 10 Feb 2019
+
+# Simple decimal fraction calculator
+PRECISION=100
+
+show_usage() {
+   script=$(basename $0)
+   cat <<EOF
+Simple Float Calculator... a simple implementation of bc
+
+Yeah... I didn't have internet and I also really needed 'bc'
+so being the overly complicated programmer as I am; I made my
+own simple float converter implementation instead of getting an
+internet connection :).
+
+Usage: $script [-p PRECISION] [a/b]
+
+Warning both 'a' and 'b' must be integers.
+It's too simple to compute float by float division ;).
+
+You can also use this command through pipes like as follows:
+   eg. echo 1/3 | $script -p 5
+
+Options
+    -p, set the floating point precision of the result
+EOF
+   exit 1
+}
+
+while getopts "p:h" argv; do
+   case $argv in
+      p ) PRECISION=$OPTARG
+         shift 2 ;;
+      h ) show_usage ;;
+      * ) show_usage ;;
+   esac
+done
+
+[ -z "$@" ] 2>/dev/null && read EXPR || EXPR=$1
+# 1/3  > 0 rem 1
+# 10/3 > 3 rem 1
+# 10/3 > 3 rem 1
+# 10/3 > 3 rem 1
+# ... up to $PRECISION
+# 0,333...
+
+# n = numerator, d = denominator
+n=$(echo $EXPR | sed s/\\/.*//g)
+d=$(echo $EXPR | sed s/.*\\///g) 
+
+# w = whole, rem = remainder
+if [ $n -eq $d ] || [ $((n % d)) -eq 0 ]; then
+   echo $((n/d)).0
+   exit
+elif [ $n -gt $d ]; then
+   w=$((n / d))
+   rem=$((n % d))
+else
+   w=0
+   rem=$n
+fi
+
+echo -n $w.
+
+for((i=1; i<=$PRECISION+1; i++)) {
+   if [ $rem -ge $d ]; then
+      echo -n $((rem / d))
+      rem=$((rem % d))
+   elif [ $i -gt 1 ]; then
+      echo -n $((rem / d))
+   fi
+   let rem=$rem*10
+   [ $rem -eq 0 ] && break
+}

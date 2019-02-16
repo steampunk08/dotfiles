@@ -1,0 +1,15 @@
+#!/bin/bash
+
+total=0
+for bytes in $(ls -l | grep "^-" | awk '{ print $5 }')
+do
+   let total=$total+$bytes
+done
+
+# bc is more acurate but isn't always installed by default
+# total_mb=$(echo "scale=2; $total/1024/1024" | bc 2>/dev/null)
+
+let total=$total/1024
+# sfc is a command in my bin/ allows simple decimal
+# calculations meant to emulate bc
+echo -n "$(echo $total/1024 | sfc -p 2) mb"

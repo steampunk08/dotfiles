@@ -1,0 +1,27 @@
+#!/usr/bin/bash
+
+# Quick building script for running assembly programs.
+# Usage: asmrun [-n NAME] FILE(S)
+
+FILES=""
+
+case $1 in
+   -n) name=$2
+      shift 2
+      ;;
+esac
+
+if [ ${#@} -gt 1 ]; then
+   for filename in ${@}; do
+      basefname=$(basename ${filename} .asm)
+
+      as -g -o $basefname.o $filename
+      FILES="$basefname.o $FILES"
+   done
+
+   ld -o bin/${name} ${FILES[*]}
+else
+   filename=$1
+   as -g -o $basefname.o $filename
+   ld -o bin/$basefname $basefname.o
+fi
