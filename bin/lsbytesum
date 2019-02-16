@@ -1,7 +1,18 @@
 #!/bin/bash
 
+show_usage() {
+   echo "Usage: $(basename $0) [-R]... (-R, recurse in dirs)"
+   exit 1
+}
+
+if [[ -n $1 ]]; then
+   [[ $1 =~ "-R" ]] && files=$(ls -alR) || show_usage
+else
+   files=$(ls -l)
+fi
+
 total=0
-for bytes in $(ls -l | grep "^-" | awk '{ print $5 }')
+for bytes in $(echo "$files" | grep "^-" | awk '{ print $5 }')
 do
    let total=$total+$bytes
 done
