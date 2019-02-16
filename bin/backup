@@ -1,6 +1,6 @@
 #!/usr/bin/bash
 
-tmux new-window -d -c $HOME -n backup -t 10 &> /dev/null
+tmux new-window -d -c $HOME -n backup -t 10 2>/dev/null
 
 BACKUP_NAME=backup-$(date "+%d_%m_%Y").zip
 TERMUX_ON_EXTCARD=$EXTCARD/Android/data/com.termux/backups

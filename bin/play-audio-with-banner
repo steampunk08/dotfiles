@@ -12,7 +12,7 @@ done
 echo "$line"
 
 toilet -f mono12 "Play
-Audio" | lolcat
+Audio" | lolcat 2>/dev/null
 
 echo "$line"
 echo "song name: " $@

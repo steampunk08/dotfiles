@@ -1,9 +1,10 @@
-#!/usr/bin/zsh
+#!/usr/bin/bash
 
 # colour configurations
-NORMAL_C=%b%F{95}
-DIR_C=%F{105}%B
-FILE_C=%F{154}%B
+_NORMAL="\e[0m"
+_DIR="\e[38;5;105;1m"
+_FILE="\e[38;5;105m"
+CLEAR="\e[0m"
 
 function show_usage() { 
    echo "run scripts under \$ADDONS_FOLDER using patterns"
@@ -19,52 +20,65 @@ function show_usage() {
    exit 1
 }
 
-while getopts "d:xh" option; do
+change_folder() {
+   if [ ! -d $1 ]; then
+      echo -e "${_DIR}$1${_NORMAL} doesn't exist$CLEAR"
+      echo -en "${_NORMAL}Do you want to create ${_DIR}$1${_NORMAL} (Y/n)? "
+      read response
+
+      if [[ $response = "y" ]] || [[ $response = "Y" ]]; then
+         mkdir $1
+         echo $(realpath $1) > ~/.addon
+         exit 0
+      else
+         exit 1
+      fi
+   fi
+   echo $(realpath $1) > ~/.addon
+}
+
+while getopts "d:h" option; do
    case $option in
-      d ) shift $(($OPTIND - 1)) argv
-          if [ -d $OPTARG ]; then
-             ADDONS_FOLDER=$OPTARG
-          else
-             print -P "${DIR_C}$OPTARG${NORMAL_C} doesn't exist%b%f"
-             exit 1
-          fi ;;
+      d ) shift $((OPTIND - 1))
+         ADDONS_FOLDER=$OPTARG
+         change_folder $OPTARG ;;
       h ) show_usage ;;
       * ) show_usage ;;
    esac
 done
 
 if [[ -z $ADDONS_FOLDER ]]; then
-   ADDONS_FOLDER=~/addons
+   if [[ -f ~/.addon ]]; then
+      ADDONS_FOLDER=$(cat ~/.addon)
+      change_folder $ADDONS_FOLDER
+   else
+      ADDONS_FOLDER=~/addons
+      change_folder $ADDONS_FOLDER
+   fi
 fi
 
-{
-   AVAILABLE_ADDONS=($ADDONS_FOLDER/*.addon) 2> /dev/null
-} always {
-   if [ $? -ne 0 ]; then
-      print -P ${NORMAL_C}no ${FILE_C}.addon${NORMAL_C} files \
-         found in ${DIR_C}$ADDONS_FOLDER%b%f
-      exit 1
-   fi
-}
+AVAILABLE_ADDONS=($ADDONS_FOLDER/*.addon)
 
-for addon in $AVAILABLE_ADDONS; do
+if [ -z $AVAILABLE_ADDONS ]; then
+   echo -e ${_NORMAL}no ${_FILE}.addon${_NORMAL} files \
+      found in ${_DIR}${ADDONS_FOLDER}$CLEAR
+   exit 1
+fi
+
+[ -z $1 ] && echo "no plugin name spercified" && exit 1
+
+for addon in ${AVAILABLE_ADDONS[*]}; do
    if [[ $addon =~ $1 ]]; then
-      if [ ${#argv} -eq 1 ]; then
-         $addon 2> /dev/null
-         if [ $? -ne 0 ]; then
-            source $addon
-            [ $? -ne 0 ] && FILE_NOT_FOUND=1
-         fi
+      if [ ${#@} -eq 1 ]; then
+         $addon
       else
-         $addon ${argv:2} 2> /dev/null
-         if [ $? -ne 0 ]; then
-            source $addon ${argv:2}
-            [ $? -ne 0 ] && FILE_NOT_FOUND=1
-         fi
+         shift 1
+         $addon $@
       fi
       exit 1
    fi
 done
 
-print -P ${NORMAL_C}addon matching ${FILE_C}$1${NORMAL_C} not \
- found in ${DIR_C}$ADDONS_FOLDER%b%f
+
+echo -e ${_NORMAL}addon matching ${_FILE}$1${_NORMAL} not \
+   found in ${_DIR}${ADDONS_FOLDER}$CLEAR

@@ -1,4 +1,6 @@
-#!/usr/bin/zsh
+#!/usr/bin/bash
+
+# To-do manager... mostly used for my prompt
 
 [[ -z $TODO_PATH ]] && TODO_PATH=~/.todo
 [[ -f $TODO_PATH ]] || touch $TODO_PATH
@@ -18,16 +20,23 @@ function show_usage() {
    exit 1
 }
 
+list_todos() {
+   todos=$(cat $TODO_PATH 2>/dev/null)
+   [[ -z $todos ]] && todos="you don't have any todos"
+
+   echo -n "$todos" | awk '{ print "* "$0 }'
+}
+
 while getopts ":celh" option; do
    case $option in
-      c ) echo ${argv:2} > $TODO_PATH ;;
+      c ) echo -n > $TODO_PATH && exit ;;
       e ) $EDITOR $TODO_PATH ;;
-      l ) cat $TODO_PATH ;;
+      l ) list_todos && exit ;;
       h ) show_usage ;;
       * ) show_usage ;;
    esac
 done
 
-if [[ -z $option ]] && [[ ! -z $1 ]]; then
+if [[ $option == "?" ]] && [[ -n $1 ]]; then
    echo $@ >> $TODO_PATH 
 fi

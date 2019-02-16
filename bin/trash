@@ -1,9 +1,10 @@
-#!/usr/bin/zsh
+#!/usr/bin/bash
 
 export TRASH_DIR=$HOME/.trash
-export TRASH_INDEX=$TRASH_DIR/.trash.index
-export TRASH_INDEX_TEMP=${TRASH_INDEX}.tmp
+# export TRASH_INDEX=$TRASH_DIR/.trash.index
+# export TRASH_INDEX_TEMP=${TRASH_INDEX}.tmp
 
+# TODO: rework and or implement new remove feature
 show_usage() {
    cat <<USAGE 
 Usage: trash [options] [args]
@@ -15,13 +16,13 @@ Commands
                          is not given. Otherwise all files matching
                          PATTERN (a standard asterisk glob pattern)
                          are deleted.
-    remove [ -d DIR ] FILENAME(S) remove files from \$TRASH_DIR. If
-                                   DIR is given files are moved to
-                                   DIR. Otherwise the files are
-                                   returned to the directory in which
-                                   they were put into \$TRASH_DIR from.
     help                show this message
 USAGE
+# remove [ -d DIR ] FILENAME(S)  remove files from \$TRASH_DIR. If
+                               # DIR is given files are moved to
+                               # DIR. Otherwise the files are
+                               # returned to the directory in which
+                               # they were put into \$TRASH_DIR from.
 }
 
 usage_on_error() {
@@ -39,46 +40,52 @@ write_trash_entry() {
    echo $(realpath $1) >> $DUMY_TRASH_INDEX
 }
 
-strip_trash_entry() {
-   local IFS="
-"
-   for entry in $(cat $TRASH_INDEX); do
-      if [[ $(basename $entry) != $1 ]]; then
-         DUMY_TRASH_INDEX=$TRASH_INDEX_TEMP
-         write_trash_entry $entry
-      fi
-   done
-   DUMY_TRASH_INDEX=$TRASH_INDEX
-   mv $TRASH_INDEX_TEMP $TRASH_INDEX
-}
+# strip_trash_entry() {
+   # local IFS="
+# "
+   # cat $TRASH_INDEX | while read entry; do
+      # if [[ $(basename $entry) != $1 ]]; then
+         # DUMY_TRASH_INDEX=$TRASH_INDEX_TEMP
+         # write_trash_entry $entry
+      # fi
+   # done
+   # DUMY_TRASH_INDEX=$TRASH_INDEX
+   # mv $TRASH_INDEX_TEMP $TRASH_INDEX
+# }
 
 add_to_trash() {
+   # for entry in $@; do
+      # write_trash_entry $entry
+   # done
    mv $@ $TRASH_DIR
-   for entry in $@; do
-      write_trash_entry $entry
-   done
 }
 
-remove_from_trash() {
-   mv $TRASH_DIR/$1 $2
-   strip_trash_entry $1
-}
+# remove_from_trash() {
+   # mv $TRASH_DIR/$1 $2
+   # strip_trash_entry $1
+# }
 
 # remove_from_trash_bulk() {
-#}
+# }
 
 case $1 in
    add )
       if [[ -z $2 ]]; then
          usage_on_error
       fi
-      add_to_trash ${argv:2} ;;
+      shift 1
+      add_to_trash $@ ;;
 
-   empty ) echo emptying ;;
-   remove )
-      if [[ $2 = "-d" ]] && [[ -n $3 ]]; then
-         [ -d $3 ] && DIR=$3 || exit 1
+   empty ) 
+      read -p "You sure you want to empty the trash (Y/n)? " response
+      if [[ $response = "Y" ]] || [[ $response = "y" ]]; then
+         rm -rf $TRASH_DIR
       fi ;;
+   # remove )
+      # # DIR=$()
+      # if [[ $2 = "-d" ]] && [[ -n $3 ]]; then
+         # DIR=$3
+      # fi ;;
    help ) show_usage ;;
 esac
 

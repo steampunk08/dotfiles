@@ -1,4 +1,5 @@
-#!/usr/bin/zsh
+#!/usr/bin/bash
+# Quick script for running java programs on termux
 
 SCRIPT_NAME=$(basename $0)
 case $1 in
@@ -12,16 +13,16 @@ case $1 in
       exit ;;
    -c | --class ) CLASSNAME=$2
       shift 2
-      if [[ $1 =~ '(-k|--keep)' ]]; then
+      if [[ $1 =~ '-k' ]] || [[ $1 =~ '--keep' ]]; then
          KEEP_DEX_FILE=1
          shift 1
       fi
       ;;
 esac
 
-declare -a FILE_NAMES=(${argv[*]})
+declare -a FILE_NAMES=($@)
 
-error() { print -P ${SCRIPT_NAME}: $@ }
+error() { echo ${SCRIPT_NAME}: $@; }
 
 if [[ -z ${FILE_NAMES[*]} ]]; then
    if [ -f $CLASSNAME.class ]; then
@@ -47,5 +48,3 @@ dalvikvm -classpath $DEX_FILE $CLASSNAME
 if [[ -z $KEEP_DEX_FILE ]]; then
    rm $DEX_FILE
 fi
-
-
