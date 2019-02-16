@@ -1,4 +1,5 @@
 HOME_PATH=$HOME
+# source $HOME/.zshrc.all
 source $HOME_PATH/.zshrc.all
 
 export EXTCARD=/storage/sdcard1
