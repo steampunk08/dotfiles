@@ -2,20 +2,19 @@
 
 let g:disarmed = v:false
 if !exists('VIMRC_HAS_BEEN_SOURCED') || g:disarmed
-   " set runtimepath+=~/vim-steampunklights
-
    let maplocalleader = "="
    let mapleader = "-"
 
    let VIMRC_MINIMAL_SETUP_MODE = v:false
    let VIMRC_HAS_BEEN_SOURCED = "2.1.2"
+
 endif
 let g:vim_indent_cont = 0
 let g:path_separator = "/"
 
 " NOTE: section is reserved for vim builtin settings
 " vim settings {{{
-set shell=zsh
+set shell=$SHELL
 set nocompatible showcmd wildmenu
 set numberwidth=3 number relativenumber
 set encoding=utf8 backspace=indent,eol,start
@@ -27,7 +26,8 @@ set smartcase smarttab smartindent autoread
 set t_Co=256 mouse=a
 set signcolumn=auto foldcolumn=0
 set splitright fillchars+=fold:-
-set lazyredraw
+set completeopt=menu
+set lazyredraw runtimepath+=.
 " }}}
 
 " NOTE: section is reserved for user defined functions / plugins of a small size
@@ -79,7 +79,7 @@ endfunction
 function! Build()
    let build_maps = {
             \ "ruby": "ruby",
-            \ "python": "python2",
+            \ "python": "python3",
             \ "javascript": "node",
             \ "zsh": "zsh",
             \ "sh": "bash",
@@ -97,6 +97,7 @@ endfunction
 nnoremap <localleader>r :call Build()<cr>
 " }}}
 " GotoLink {{{
+" Depends on "w3m" terminal web browser
 function! GotoLink()
    if SynName() == "markdownLinkText"
       let saved_register = @l
@@ -130,27 +131,19 @@ nnoremap yid :let [@", @h] = [SynName(), SynName()]<cr>
 " Colourize (colorscheme tease) {{{
 command! -nargs=* -bang Colourize call Colourize(<f-args>, <bang>0)
 
-function! Colourize(...)
-   let g:counter = 0
-   let g:name = a:1
-   if a:0 > 2
-      echoerr 
-   function! Callback(timer)
-      let g:counter += 1
-      execute "hi " . g:name . " ctermfg=" . g:counter
-      redraw!
-      sleep 200m
-      if g:counter > 249
-         let g:counter = 0
-      endif
-   endfunction
-   if a:0 ==
-   let colourize = timer_start(1, funcref("Callback"), {'repeat': -1})
+function! Colourize(name, timer)
+   execute "hi " . a:name . " ctermfg=" . g:counter % 256
+   redraw!
+   let g:counter += 1
 endfunction
+
+let g:counter = 0
+command! -nargs=1 Colourize let g:counter=0 | let colourize = timer_start(100, funcref("Colourize", [<q-args>]), {'repeat': -1})
 " }}}
 " Tease (colorcheme tease) {{{
 command! Tease call Tease()
-let g:tease_color_num = 111
+let g:tease_color_num = 197
+let g:tease_attribs = "none"
 
 function! Tease()
    while v:true
@@ -158,8 +151,18 @@ function! Tease()
       if empty(var)
          echo 'Teasing done !'
          return
+      elseif var =~ '\.c\%[olor] \d*'
+         let args = split(var)[1:]
+         let g:tease_color_num = str2nr(args[0]) % 256
+
+         if !empty(args[1:])
+            let g:tease_attribs = join(args[1:], ",")
+         endif
+         silent let var = input("> ")
       endif
-      execute "hi " . var . " ctermfg=" . g:tease_color_num
+      execute "hi " . var .
+            \ " ctermfg=" . g:tease_color_num . 
+            \ " cterm=" . g:tease_attribs
       redraw!
       sleep 500m
    endwhile
@@ -216,15 +219,61 @@ function! TabeBuffers()
    endfor
 endfunction
 " }}}
+" BoolSwitch {{{
+let g:BOOL_SWITCH_PAIRS = [
+\ ["true", "false"], 
+\ ["True", "False"]
+\ ]
+
+function! BoolSwitch(bool)
+   if exists('g:BOOL_SWITCH_PAIRS')
+      let BOOL_PAIRS = g:BOOL_SWITCH_PAIRS
+   else
+      let BOOL_PAIRS = [["true", "false"], ["True", "False"]]
+   endif
+   for pairs in BOOL_PAIRS
+      let length = len(pairs)
+      for b in pairs
+         if b ==# a:bool
+            let index = index(pairs, b) + 1
+            return pairs[index % length]
+         endif
+      endfor
+   endfor
+   return a:bool
+endfunction
+
+nnoremap <silent> <localleader>t "tyiw:let @f = BoolSwitch(@t)<cr>viw"fp
+" }}}
+" Goto File (extension) {{{
+function! GotoFile(filename)
+   let filename = expand(a:filename)
+   if file_readable(filename)
+      execute "tabedit " . a:filename
+   else
+      if file_readable(filename . ".qml")
+         execute "tabedit " . filename . ".qml"
+         return
+      endif
+      echoerr "E447: Can't find \"" . filename . "\" in path"
+   endif
+endfunction
+
+nnoremap <silent> gf :call GotoFile(expand("<cfile>"))<cr>
+" }}}
 " }}}
 
 " NOTE: section is reserved for misc. mappings
 " mappings {{{
 nnoremap <leader>ev :tabedit $MYVIMRC<cr>
-nnoremap <leader>sv :source $MYVIMRC<cr>
 nnoremap <leader>ez :tabedit ~/.zshrc<cr>
+nnoremap <leader>eb :tabedit ~/.bashrc<cr>
+nnoremap <leader>ep :tabedit $XDG_CONFIG_HOME/nvim/after/plugin/plugin_configs.vim<cr>
+
+nnoremap <leader>sv :source $MYVIMRC<cr>
 "nnoremap <localleader>r :w<cr>:so %<cr>
 nnoremap gv v$
+nnoremap G G$
 " movement mappings {{{
 noremap H ^
 noremap L $
@@ -269,6 +318,9 @@ augroup FILETYPE_SPERCIFIC
    autocmd!
    autocmd Filetype zsh,sh setlocal iskeyword+=-
    autocmd Filetype help setlocal iskeyword+=- iskeyword+=# iskeyword+=:
+   autocmd Filetype help nmap <bs> <c-o>
+   autocmd Filetype html setlocal matchpairs-=<:>
+   autocmd Filetype kivy setlocal shiftwidth=4 commentstring=#%s
 augroup END
 
 augroup EDITOR_MODE
@@ -278,8 +330,8 @@ augroup END
 augroup SETTING_FILETYPES
    autocmd!
    autocmd BufNewFile,BufRead prompt_*_setup setfiletype zsh
-   autocmd BufNewFile,BufRead *.vifm setfiletype vim
-   autocmd BufNewFile,BufRead *.fish setfiletype zsh
+   " autocmd BufNewFile,BufRead *.vifm setfiletype vim
+   " autocmd BufNewFile,BufRead *.fish setfiletype zsh
    autocmd BufNewFile,BufRead crontabs.* setfiletype crontab
 augroup END
 
