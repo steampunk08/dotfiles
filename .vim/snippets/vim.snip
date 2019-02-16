@@ -1,6 +1,7 @@
 snippet aug
 abbr augroup
    augroup ${1:GROUP_NAME}
+      autocmd!
       ${0}
    augroup END
 
@@ -52,3 +53,19 @@ snippet try
    catch ${2:/${3\}/}
       ${0}
    endtry
+
+snippet steamre
+   call Steampunklights.Syntax.region({
+   \  '${1}': [['${2}']${3:, ${4\}}],${0}
+   \ })
+
+snippet steamma
+   call Steampunklights.Syntax.match({
+   \  '${1}': [['${2}']${3:, ${4\}}],${0}
+   \ })
+
+snippet steamli
+   call Steampunklights.Highlight({
+   \  '${1}': ${2:'${0:\}'},
+   \ })
+

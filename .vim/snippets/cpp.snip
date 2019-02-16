@@ -1,0 +1,19 @@
+snippet main
+   int main(${1:int argc, char *argv[]})
+   {
+      ${0};
+      return ${2:0};
+   }
+
+snippet inc
+   #include <${0}>
+
+snippet console
+   #include <iostream>
+   using namespace std;
+
+   int main(${1:int argc, char *argv[]})
+   {
+      ${0};
+      return ${2:0};
+   }

@@ -1,0 +1,47 @@
+snippet quick
+   import QtQuick 2.5
+
+   ${1:Item} {
+      id: ${2:root}
+      anchors.fill: parent
+
+      ${0}
+   }
+
+snippet canvas
+      var ctx = ${1:canvas}.getContext("2d")
+      ctx.lineWidth = ${2:1}
+      ctx.strokeStyle = "${3:black}"
+      ctx.fillStyle = "${4:black}"
+
+      ctx.beginPath()
+      ${0}
+
+      ctx.stroke()
+      ctx.fill()
+
+snippet line
+   ctx.lineTo(${1}, ${2})
+
+snippet move
+   ctx.moveTo(${1}, ${2})
+
+snippet property
+alias prop
+   property ${1:variant} ${2:name}${3:: ${4:value\}}
+
+snippet behaveon
+   Behavior on ${1:opacity} {
+      ${2:NumberAnimation { duration: ${3:1000\} }}
+   }
+
+snippet oncomplete
+alias oncomp
+   Component.onCompleted: ${0}
+
+snippet func
+alias function
+   function ${1:name}(${2})
+   {
+      ${0}
+   }

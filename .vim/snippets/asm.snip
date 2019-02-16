@@ -1,0 +1,17 @@
+snippet start
+   .global _start
+
+   _start:
+      ${0}
+
+   end:
+      MOV R7, #1
+      SWI 0
+
+snippet print
+   MOV R7, #4
+   MOV R0, #1
+   MOV R2, #${1}
+   LDR R1, =${2:message}
+   SWI 0
+   ${0}
