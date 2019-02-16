@@ -1,8 +1,7 @@
 " =============================================================================
-" Filename: autoload/lightline/colorscheme/molokai.vim
-" Author: challsted
-" License: MIT License
-" Last Change: 2016/11/17 00:27:58.
+" Filename: autoload/lightline/colorscheme/hornet.vim
+" Author: Sphe M
+" Last Change: 10 Feb 2019
 " =============================================================================
 "
 let s:chartreuse = ['#afff00', 154]
@@ -23,37 +22,32 @@ let s:darkgray   = ['#1c1c1c', 234]
 let s:white      = ['#ffffff', 15]
 let s:black      = ['#080808', 232]
 let s:red        = ['#d75f5f', 167]
-let s:peach      = ['#ffd7af', 223]
 let s:orange     = ['#ff5f00', 202]
 
 let s:p = {'normal': {}, 'inactive': {}, 'insert': {}, 'replace': {}, 'visual': {}, 'tabline': {}}
 
 let s:p.normal.left = [ 
-\  [ s:darkgray , s:mustard ],
+\  [ s:darkgray , s:mustard  ],
 \  [ s:mustard  , s:darkgray ],
-\  [ s:lightgray, s:dimgray ]]
+\  [ s:lightgray, s:dimgray  ]]
 
-let s:p.normal.middle = [ [ s:orange, s:darkgray ] ]
-let s:p.normal.right = [
-\  [ s:darkgray , s:mustard ],
-\  [ s:mustard  , s:darkgray ],
-\  [ s:lightgray, s:dimgray ]]
+let insert_mode = deepcopy(s:p.normal.left)
+let insert_mode[0][1] = s:blurple
+
+let s:p.insert.left = insert_mode
+let s:p.insert.right = deepcopy(insert_mode)
+
+let visual_mode = deepcopy(s:p.normal.left)
+let visual_mode[0][1] = s:chartreuse
+
+let s:p.visual.left = visual_mode
+let s:p.visual.right = deepcopy(visual_mode)
+
+let s:p.normal.middle = [[ s:orange, s:darkgray ]]
+let s:p.normal.right = deepcopy(s:p.normal.left)
 
 let s:p.tabline.right = [
 \  [ s:darkgray, s:mustard ],
 \  [ s:white   , s:dimgray ]]
-
-" let s:p.normal.error = [ [ s:hotpink, s:darkgray ] ]
-" let s:p.normal.warning = [ [ s:banana, s:darkgray ] ]
-" let s:p.insert.left = [ [ s:darkgray, s:chartreuse ], [ s:chartreuse, s:darkgray ] ]
-" let s:p.visual.left = [ [ s:darkgray, s:banana ], [ s:banana, s:darkgray ] ]
-" let s:p.replace.left = [ [ s:darkgray, s:red ], [ s:red, s:darkgray ] ]
-" let s:p.inactive.left =  [ [ s:hotpink, s:darkgray ], [ s:white, s:darkgray ] ]
-" let s:p.inactive.middle = [ [ s:gray, s:darkgray ] ]
-" let s:p.inactive.right = [ [ s:white, s:hotpink ], [ s:hotpink, s:darkgray ] ]
-" let s:p.tabline.left = [ [ s:black, s:coffee ] ]
-" let s:p.tabline.middle = [ [ s:hotpink, s:darkgray] ]
-" let s:p.tabline.right = copy(s:p.normal.right)
-" let s:p.tabline.tabsel = [ [ s:darkgray, s:hotpink ] ]
 
 let g:lightline#colorscheme#hornet#palette = lightline#colorscheme#flatten(s:p)

@@ -1,42 +1,52 @@
 " SPHE M'S PLUGIN CONFIGS
 
+" run asm
+command! Asmrun :VimuxRunCommand "as -g -o " .expand("%:r").".o " .expand("%") . " && ld -o bin/".expand("%:r") . " ".expand("%:r").".o && bin/" .expand("%:r"). "; echo $?"
 " easymotion
-map <pageup> <plug>(easymotion-prefix)
 let g:EasyMotion_verbose = 0
 
-" nerdcommenter
+" nerdcommenter {{{
 map <localleader>c <plug>NERDCommenterToggle
 
 let NERDSpaceDelims = 1
 let NERDRemoveExtraSpaces = 1
-
-" nerdtree
-let g:NERDTreeDirArrowExpandable = "+"
-let g:NERDTreeDirArrowCollapsible = "-"
-
+" }}}
 " deoplete {{{
+if !exists('g:necovim#complete_functions')
+   let g:necovim#complete_functions = {'Ref': 'ref#complete'}
+endif
+
 call deoplete#custom#option({
-\   'auto_complete_delay': 100,
-\   'smart_case': v:true,
 \   'ignore_sources': { '_': ['around'] },
 \   'skip_chars': ['\', '(', ')'],
+\   'auto_complete_delay': 80,
+\   'smart_case': v:true,
+\   'min_pattern_length': 2,
+\   'max_lsit': 350,
+\   'omni_patterns': {
+\      'cpp':  ['[^. *\t]\(::\|\.\|->\)'],
+\      'javascript':  ['[^. *\t]\.\w*'],
+\      'xml':  ['</'],
+\      'html': ['</'],
+\   },
+\   'sources': {
+\      '_':   ['file', 'buffer', 'omni', 'member', 'syntax'],
+\      'vim': ['file', 'buffer', 'vim'],
+\   },
 \ })
-" \   'omni_patterns': { 'java': '[^. *\t]\.\w*', 'xml': '</'},
-call deoplete#custom#option('sources', {'_': ['file', 'omni', 'buffer', 'member']})
-call deoplete#custom#var('buffer', 'require_same_filetype', v:false)
-call deoplete#custom#var('member', 'prefix_patterns', {'vim': ['#', ':']})
 
-inoremap <silent> <CR> <C-r>=<SID>return_func()<CR>
+" \   'omni_patterns': { 'java': '[^. *\t]\.\w*', 'xml': '</'},
+call deoplete#custom#var('buffer', 'require_same_filetype', v:false)
+call deoplete#custom#var('member', 'prefix_patterns', {'vim': ['#', ':', '\.']})
 
 function! s:return_func() abort
    return deoplete#close_popup() . "\<CR>"
 endfunction
 
-call deoplete#enable()
+inoremap <expr> <cr> <SID>return_func()
 
-augroup DEOPLETE
-   autocmd InsertEnter * call deoplete#initialize()
-augroup END
+call deoplete#enable()
+call deoplete#initialize()
 " }}}
 
 " colorizer
@@ -95,6 +105,10 @@ let g:undotree_WindowLayout = 2
 " }}}
 " nerdtree {{{
 nnoremap <silent> [n :NERDTreeToggle<cr>
+
+let NERDTreeShowHidden = 1
+let NERDTreeDirArrowCollapsible = "-"
+let NERDTreeDirArrowExpandable = "+"
 
 function! Quit()
    return
@@ -207,6 +221,9 @@ endfunction
 
 function! CharCount()
    let sum = 0
+   if getfsize(expand("%")) > 10000
+      return v:false
+   endif
    for i in getline(0, '$')
       let sum += Sum(i) + 1
    endfor
@@ -300,7 +317,7 @@ let g:lightline = {
 \     'left': [ [ 'mode', 'paste' ],
 \               [ 'modifiable', 'filename', 'modflag' ],
 \               [ 'synname' ] ],
-\     'right': [ [ 'charcount', 'wordcount' ],
+\     'right': [ [ 'atchar', 'wordcount' ],
 \                [ 'lineinfo' ],
 \                [ 'filetype' ] ],
 \     },
@@ -314,6 +331,7 @@ let g:lightline["component"] = {
 \  'wordcount': "%{'words ' . WordCount()}",
 \  'lineinfo': '%c:%l',
 \  'tabname': '%t',
+\  'atchar': '%o',
 \  'closelabel': 'close'
 \ }
 
@@ -321,7 +339,6 @@ let g:lightline["component_function"] = {
 \  'synname': 'SynName',
 \  'modifiable': 'Modifiable',
 \  'modflag': 'ModFlag',
-\  'getfsize': 'GetFSize',
 \  'charcount': 'CharCount',
 \  'tabname': 'TabName',
 \  'tabnextname': 'TabNextName',
@@ -337,30 +354,42 @@ let g:lightline["component_expand"] = {
 \  'tabnums': 'TabNumbers',
 \ }
 
-" source ~/nvim/autoload/lightline/colorscheme/steampunklights.vim
+" $XDG_CONFIG_HOME/nvim/autoload/lightline/colorscheme/hornet.vim
 let g:lightline.colorscheme = "hornet"
 " }}}
 " steampunklights {{{
+" personal statusline
 try
    colorscheme steampunklights
 
-   " personal statusline
    call Steampunklights.Highlight({
-   \   'Tabnum':  ["black", "midgray"],
-   \   'TabnumCurrent':  ["lightgray", "darkgray"],
-   \   'TabnumSep': ["black", "midgray"],
+   \   'Tabnum':        ["black", "midgray"],
+   \   'TabnumCurrent': ["lightgray", "darkgray"],
+   \   'TabnumSep':     ["black", "midgray"],
    \ },'Tabnum')
 
 catch /E185/
    colorscheme darkblue
 endtry
 " }}}
-
+" javaapi {{{
 augroup JAVA_FILE_TYPE
-   au BufNewFile,BufRead *.java setl omnifunc=javaapi#complete
+   autocmd!
+   autocmd BufNewFile,BufRead *.java setl omnifunc=javaapi#complete
 augroup END
 
 let g:javaapi#delay_dirs = [
 \ 'java-api-junit',
 \ 'java-api-android',
 \ ]
+" }}}
+" omni cpp complete {{{
+" FIXME
+let g:ctags_not_found = 0
+if exists('g:ctags_not_found') && !g:ctags_not_found
+   augroup OMNI_CPP_COMPLETE
+      autocmd!
+      autocmd BufWritePost *.cpp silent !ctags -u --c++-kinds=+p --fields=+iaS --extras=+q **/*.cpp
+   augroup END
+endif
+" }}}
