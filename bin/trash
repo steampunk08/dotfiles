@@ -10,13 +10,22 @@ show_usage() {
 Usage: trash [options] [args]
 
 Commands
-    add    FILENAME(S)  add files to \$TRASH_DIR this also adds an
+   (a)dd    FILENAME(S)  add files to \$TRASH_DIR this also adds an
                          entry to the \$TRASH_INDEX file.
-    empty  [ PATTERN ]  delete all files in \$TRASH_DIR, if PATTERN
+
+   (em)pty  [ PATTERN ]  delete all files in \$TRASH_DIR, if PATTERN
                          is not given. Otherwise all files matching
                          PATTERN (a standard asterisk glob pattern)
                          are deleted.
-    help                show this message
+
+   (l)ist                list files currently under \$TRASH_DIR
+
+   (en)able              Enable trash. When enabled files will be
+                         moved to \$TRASH_DIR otherwise the files
+                         are deleted.
+
+   (d)isable             Disable trash.
+   (h)elp                show this message
 USAGE
 # remove [ -d DIR ] FILENAME(S)  remove files from \$TRASH_DIR. If
                                # DIR is given files are moved to
@@ -55,9 +64,13 @@ write_trash_entry() {
 
 add_to_trash() {
    # for entry in $@; do
-      # write_trash_entry $entry
+   # write_trash_entry $entry
    # done
-   mv $@ $TRASH_DIR
+   if [ -f ~/.trash_disabled ]; then
+      rm $@
+   else
+      mv $@ $TRASH_DIR
+   fi
 }
 
 # remove_from_trash() {
@@ -69,24 +82,31 @@ add_to_trash() {
 # }
 
 case $1 in
-   add )
+   a | add )
       if [[ -z $2 ]]; then
          usage_on_error
       fi
       shift 1
       add_to_trash $@ ;;
 
-   empty ) 
+   em | empty ) 
       read -p "You sure you want to empty the trash (Y/n)? " response
       if [[ $response = "Y" ]] || [[ $response = "y" ]]; then
          rm -rf $TRASH_DIR
       fi ;;
+   en | enable )
+      rm ~/.trash_disabled 2>/dev/null
+      ;;
+   d | disable )
+      touch ~/.trash_disabled
+      ;;
+   l | list ) ls $TRASH_DIR ;;
    # remove )
       # # DIR=$()
       # if [[ $2 = "-d" ]] && [[ -n $3 ]]; then
          # DIR=$3
       # fi ;;
-   help ) show_usage ;;
+   h | help ) show_usage ;;
 esac
 
 #strip_trash_entry Packages.1

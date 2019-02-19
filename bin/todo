@@ -6,17 +6,19 @@
 [[ -f $TODO_PATH ]] || touch $TODO_PATH
 
 function show_usage() { 
-   echo "script to manage todo's in \$TODO_PATH"
-   echo
-   echo "Usage: todo [option] [message]"
-   echo
-   echo "Options"
-   echo "    -c, clear the todo file before writing [message]"
-   echo "    -e, use \$EDITOR to edit todo file"
-   echo "    -h, show this message"
-   echo "    -l, list all todos"
-   echo 
-   echo "Todo script written by Sphe M"
+   cat <<EOF
+script to manage todo's in \$TODO_PATH
+
+Usage: todo [option] [message]
+
+Options"
+    -c, clear the todo file before writing [message]
+    -e, use \$EDITOR to edit todo file
+    -h, show this message
+    -l, list all todos
+
+Todo script written by Sphe M
+EOF
    exit 1
 }
 
@@ -27,7 +29,7 @@ list_todos() {
    echo -n "$todos" | awk '{ print "* "$0 }'
 }
 
-while getopts ":celh" option; do
+while getopts "celh" option; do
    case $option in
       c ) echo -n > $TODO_PATH && exit ;;
       e ) $EDITOR $TODO_PATH ;;

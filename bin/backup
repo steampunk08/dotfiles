@@ -1,39 +1,76 @@
 #!/usr/bin/bash
 
-tmux new-window -d -c $HOME -n backup -t 10 2>/dev/null
-
-BACKUP_NAME=backup-$(date "+%d_%m_%Y").zip
 TERMUX_ON_EXTCARD=$EXTCARD/Android/data/com.termux/backups
+BACKUP_NAME=backup-$(date "+%d%m%Y")
+SAVE_SYMLINKS=true
 
-if [[ -n $TERMUX_ON_EXTCARD ]] && [[ -z $DESTINATION_FOLDER ]]; then
+show_usage() {
+   cat <<EOF
+Usage: backup [options] 
+
+Options
+   -a, archive all files in \$HOME 
+   -f, perform actions in current session
+       defualt uses tmux windows to achieve background
+       processing
+   -h, show this help message
+   -s, save resulting archive to \$DESTINATION_FOLDER
+EOF
+}
+
+cd $HOME
+
+if [[ -z $DESTINATION_FOLDER ]]; then
    DESTINATION_FOLDER=$TERMUX_ON_EXTCARD
 fi
 
-case $1 in 
-   --all )
-      BACKUP_FILES=(.)
-      SAVE_SYMLINKS=true
+if [ ! -d $DESTINATION_FOLDER ]; then
+   mkdir $DESTINATION_FOLDER
+fi
 
-      if [[ -z $2 && $2 =~ --save ]]; then
-         EXPORT_BACKUP=true
-      fi
-      ;;
-   * )
-      BACKUP_FILES=(dotfiles vim-steampunklights Android psuedocode.vim)
-      ;;
-esac
+while getopts "asfh" argv; do
+   case $argv in
+      a ) BACKUP_FILES=(.)
+         BACKUP_NAME="large-$BACKUP_NAME" ;;
+      s ) EXPORT_BACKUP=true ;;
+      f ) FOREGROUND=true ;;
+      h ) show_usage ;;
+      * ) show_usage && exit 1 ;;
+   esac
+done
+
+if [ -z $BACKUP_FILES ]; then
+   BACKUP_FILES=(dotfiles vim-steampunklights vim-swapcase)
+fi
 
 if [ $SAVE_SYMLINKS ]; then
    OPTIONS="-y"
 fi
 
-if [[ -n $BACKUP_FILES ]]; then
-   COMMAND="zip $OPTIONS $BACKUP_NAME -r9 ${BACKUP_FILES[*]}"
+if [ -z $(which zip) ]; then
+   EXTENSION=.tar.gz
+   COMMAND="tar -cvz ${BACKUP_FILES[*]} -f $BACKUP_NAME.tar.gz"
+else
+   EXTENSION=.zip
+   COMMAND="zip $OPTIONS $BACKUP_NAME.zip -r9 ${BACKUP_FILES[*]}"
 fi
 
 if [ $EXPORT_BACKUP ]; then
-   COMMAND="mv $BACKUP_NAME $DESTINATION_FOLDER"
+   COMMAND_2="mv $BACKUP_NAME${EXTENSION} $DESTINATION_FOLDER"
 fi
 
-tmux send-keys -t :10 "$COMMAND" C-m
-# tmux send-keys -t :10 "exit" C-m
+tmux has-session 2>/dev/null
+
+if [ $? -ne 0 ] || [ $FOREGROUND ]; then
+   $COMMAND
+   [ $EXPORT_BACKUP ] && $COMMAND_2
+else
+   tmux new-window -d -c $HOME -n backup -t 10
+   tmux send-keys -t :10 "$COMMAND" C-m
+   if [ $EXPORT_BACKUP ]; then
+      tmux send-keys -t :10 "$COMMAND_2" C-m
+      tmux send-keys -t :10 "exit" C-m
+   fi
+fi
+
+cd $OLDPWD
