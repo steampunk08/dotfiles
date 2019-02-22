@@ -1,7 +1,7 @@
 #!/usr/bin/bash
 
 if [ -z $DEBS_DIRECTORY ]; then
-   DEBS_DIRECTORY=$EXTCARD/Android/data/com.termux/.debs
+   DEBS_DIRECTORY=$TERMUX/.debs
 fi
 
 for file in $@; do

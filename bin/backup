@@ -1,6 +1,5 @@
 #!/usr/bin/bash
 
-TERMUX_ON_EXTCARD=$EXTCARD/Android/data/com.termux/backups
 BACKUP_NAME=backup-$(date "+%d%m%Y")
 SAVE_SYMLINKS=true
 
@@ -14,18 +13,18 @@ Options
        defualt uses tmux windows to achieve background
        processing
    -h, show this help message
-   -s, save resulting archive to \$DESTINATION_FOLDER
+   -s, save resulting archive to \$BACKUP_FOLDER
 EOF
 }
 
 cd $HOME
 
-if [[ -z $DESTINATION_FOLDER ]]; then
-   DESTINATION_FOLDER=$TERMUX_ON_EXTCARD
+if [[ -z $BACKUP_FOLDER ]]; then
+   BACKUP_FOLDER=$TERMUX/backups
 fi
 
-if [ ! -d $DESTINATION_FOLDER ]; then
-   mkdir $DESTINATION_FOLDER
+if [ ! -d $BACKUP_FOLDER ]; then
+   mkdir $BACKUP_FOLDER
 fi
 
 while getopts "asfh" argv; do
@@ -56,7 +55,7 @@ else
 fi
 
 if [ $EXPORT_BACKUP ]; then
-   COMMAND_2="mv $BACKUP_NAME${EXTENSION} $DESTINATION_FOLDER"
+   COMMAND_2="mv $BACKUP_NAME${EXTENSION} $BACKUP_FOLDER"
 fi
 
 tmux has-session 2>/dev/null

@@ -19,7 +19,7 @@ tmux split-window -v
 make-aliases
 
 tmux split-window -t .1 -h
-tmux send-keys "vim ~/.todo" C-m
+tmux send-keys "$EDITOR ~/.todo" C-m
 
 tmux select-pane -t 3
 

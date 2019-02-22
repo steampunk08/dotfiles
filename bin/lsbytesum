@@ -1,12 +1,12 @@
 #!/bin/bash
 
 show_usage() {
-   echo "Usage: $(basename $0) [-R]... (-R, recurse in dirs)"
+   echo "Usage: $(basename $0) [-R|--recurse]... (-R, recurse in dirs)"
    exit 1
 }
 
 if [[ -n $1 ]]; then
-   [[ $1 =~ "-R" ]] && files=$(ls -alR) || show_usage
+   [[ $1 =~ -(R|-recurse) ]] && files=$(ls -alR) || show_usage
 else
    files=$(ls -l)
 fi
