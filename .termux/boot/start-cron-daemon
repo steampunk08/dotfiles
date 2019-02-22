@@ -1,4 +1,4 @@
-#!/usr/bin/sh
+#!/bin/bash
 
 termux-wake-lock
-crond -c $CRONTABS_DIR
+crond -c ${CRONTABS_DIR:-$HOME/crontabs}
