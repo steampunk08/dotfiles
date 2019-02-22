@@ -1,0 +1,39 @@
+#!/bin/bash
+
+sIFS=$IFS
+IFS="
+"
+
+DOWNLOAD_DIRECTORY=$TERMUX/.debs/
+content=$(cat $1)
+cd $DOWNLOAD_DIRECTORY
+
+do_download() { echo wget https://termux.net/$1; }
+
+fsize() {
+   size=$(ls -l $@ 2>/dev/null | awk '{ print $5 }')
+   if [ -z $size ]; then
+      echo 0
+   else
+      echo $size
+   fi
+}
+
+for line in $content; do
+   if [[ $line =~ ^Filename:\ (.+) ]]; then
+      filename_extended=${BASH_REMATCH[1]}
+      filename=$(basename $filename_extended)
+   fi
+   if [[ $line =~ ^Size:\ ([0-9]+) ]]; then
+      size_of_found=$(fsize $filename)
+      actual_size=${BASH_REMATCH[1]}
+      
+      if [ $size_of_found -ne $actual_size ]; then
+         do_download $filename_extended
+      fi
+   fi
+done
+
+IFS=$sIFS
+
+cd $OLDPWD
