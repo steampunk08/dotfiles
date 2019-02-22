@@ -54,7 +54,7 @@ export PAGER=less
 export TERM=xterm-256color
 export TODO_PATH=~/.todo
 export CRONTABS_DIR=~/crontabs
-export XDG_CONFIG_HOME=$HOME
+# export XDG_CONFIG_HOME=$HOME
 # }}}
 # less options {{{
 export LESS="Ri"
@@ -108,7 +108,6 @@ alias mkdir="mkdir -pv"
 alias rm="trash add"
 alias rrm="\rm -r "
 alias cp="cp -r"
-alias nvim="nvim"
 alias python="python2"
 alias server="python2 -m SimpleHTTPServer"
 alias crontab="crontab -c $HOME/crontabs/"

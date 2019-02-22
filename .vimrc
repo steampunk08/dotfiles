@@ -182,24 +182,6 @@ endfunction
 " }}}
 " Tabe Buffers {{{
 command! TabeBuffers call TabeBuffers() 
-" FIXME
-"function! CompareBufs(num, bufname)
-   "if bufname(a:num) == a:bufname
-      "return v:true
-   "endif
-"endfunction
-
-"function! BufAlreadyOpened(bufname)
-"for i in range(tabpagenr('$'))
-   "let tabbufs = tabpagebuflist(i)
-   "if type(tabbufs) == type([])
-      "for tabbufnum in tabbufs
-         "return CompareBufs(tabbufnum, a:bufname)
-      "endfor
-   "endif
-   "return CompareBufs(tabbufs, a:bufname)
-"endfor
-"endfunction
 
 function! TabeBuffers()
    for Buffer in split(execute("buffers"), '\n')
@@ -212,10 +194,6 @@ function! TabeBuffers()
          echo bufname
          execute 'tabe ' . bufname
       endif
-      " 57%a"~/.vimrc"line347
-      "if ! BufAlreadyOpened(bufname)
-         execute 'tabe ' . bufname
-      "endif
    endfor
 endfunction
 " }}}
