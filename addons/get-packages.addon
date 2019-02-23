@@ -1,16 +1,28 @@
 #!/bin/bash
 
 sIFS=$IFS
-IFS="
-"
+IFS=$'\n'
+
+if [[ $1 =~ --(dry-run|dry) ]]; then
+   DRY_RUN=true
+   shift 1
+fi
 
 DOWNLOAD_DIRECTORY=$TERMUX/.debs/
 content=$(cat $1)
 cd $DOWNLOAD_DIRECTORY
 
-do_download() { echo wget https://termux.net/$1; }
+do_download()
+{
+   if [ $DRY_RUN ]; then
+      echo wget https://termux.net/$1
+      return 0
+   fi
+   wget https://termux.net/$1
+}
 
-fsize() {
+fsize()
+{
    size=$(ls -l $@ 2>/dev/null | awk '{ print $5 }')
    if [ -z $size ]; then
       echo 0
