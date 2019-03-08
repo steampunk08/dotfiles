@@ -13,7 +13,7 @@ case $1 in
       exit ;;
    -c | --class ) CLASSNAME=$2
       shift 2
-      if [[ $1 =~ '-k' ]] || [[ $1 =~ '--keep' ]]; then
+      if [[ $1 =~ -(k|-keep) ]]; then
          KEEP_DEX_FILE=1
          shift 1
       fi
