@@ -21,4 +21,4 @@ _binmgr_complete()
    fi
 }
 
-complete -F _binmgr_complete binmgr
+complete -F _binmgr_complete bin
