@@ -1,7 +1,3 @@
-# bindings for colemak: https://github.com/bunnyfly/dotfiles/blob/master/lesskey
-# http://linux.die.net/man/1/lesskey
-# have to lesskey ~/.lesskey to change bindings
-
 #command
 N		reverse-search
 

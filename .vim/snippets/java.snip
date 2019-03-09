@@ -13,6 +13,9 @@ snippet main
 snippet sout
    System.out.println(${1});
 
+snippet print
+   System.out.print(${1});
+
 snippet pcsvm
    public class `expand("%:t:r")`
    {
@@ -34,13 +37,14 @@ snippet var
    ${1:public} ${2} ${3:name}${4: = ${0:\}};
 
 snippet me
+alias meth method
    public ${1} ${2:name}(${3})
    {
       ${0}
    }
 
 snippet con
-alias cons
+alias cons construct
    public ${1:`expand("%:t:r")`}(${2})
    {
       ${0}

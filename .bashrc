@@ -2,13 +2,14 @@
 
 # exports {{{
 export SHELL=$PREFIX/bin/bash
-export PATH=$HOME/bin:$PATH
+export PERSONAL_PATH=$HOME/bin
+export PATH=$HOME/bin:$PATH:$PERSONAL_PATH
 export TERM=xterm-256color
 export EDITOR=nvim
 export PAGER=less
 export EXTCARD=/storage/3039-3361
 export TERMUX=$EXTCARD/Android/data/com.termux/
-export HISTCONTROL=ignoredups
+export HISTCONTROL=erasedups:ignoredups
 export CRONTABS_DIR=$HOME/crontabs
 export DEBS_DIRECTORY=$TERMUX/.debs
 export COMP_DIRECTORY=$HOME/bin/completions
@@ -26,11 +27,7 @@ export LESS_TERMCAP_ue=$'\e[0m'
 export LESS_TERMCAP_so=$'\e[30;48;5;111m'
 export LESS_TERMCAP_se=$'\e[0m'
 
-if [[ -f ~/.addon ]]; then
-   export ADDONS_FOLDER=$(cat ~/.addon)
-else
-   export ADDONS_FOLDER=~/addons
-fi
+export ADDONS_FOLDER=~/addons
 # }}}
 # shell options {{{
 set -o vi

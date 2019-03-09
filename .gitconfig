@@ -7,9 +7,11 @@
 	editor  = nvim
 [alias]
 	s       = status
-	set     = config --global
+   set     = config --global
    edit    = config --global -e
 	rmc     = rm --cached
+   l       = log --decorate --graph
+	unstage = reset HEAD --
 [credential]
 	helper  = store
 

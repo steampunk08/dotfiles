@@ -4,13 +4,13 @@ source ~/.vimrc
 " $XDG_CONFIG_HOME/nvim/after/plugin/plugin_configs.vim
 " $XDG_CONFIG_HOME/nvim/autoload/lightline/colorscheme/hornet.vim
 " $HOME/vim-steampunklights
-" $HOME/vim-swapcase
+" $HOME/vim-swapitems
 source ~/plugins.vim
 noremap K <nop>
 
 " Personal Plugins
 set runtimepath+=~/vim-steampunklights
-set runtimepath+=~/vim-swapcase
+set runtimepath+=~/vim-swapitems
 " set runtimepath+=~/qt5.vim
 " set runtimepath+=~/asm_arm.vim
 

@@ -1,11 +1,13 @@
 # Crontab format:
 # min hour dayNum month dayOfWeek commands
 
-12 4 * * * play-audio /storage/sdcard1/LawOfAttraction/AbundanceAudio1master.mp3
-#*/3 * * * * play-audio /storage/sdcard1/Music/sia_helium_lyrics_mp3_8209.mp3
-#45 21 * * * play-audio /storage/sdcard1/Music/lsd_audio_ft._sia_diplo_labrinth_mp3_14138.mp3
-*/30 * * * * backup
-0 12 */2 * * backup --all
+# 12 4 * * * play-audio /storage/3039-3361/TheBestMeICanBe/LawOfAttraction/AbundanceAudio1master.mp3
+
+# 30 16 * * * play-audio /storage/3039-3361/TheBestMeICanBe/Motivation/END LAZINESS - Powerful Motivational Video for Success & Studying 2017.mp4
+# */3 * * * * play-audio /storage/sdcard1/Music/sia_helium_lyrics_mp3_8209.mp3
+# 45 21 * * * play-audio /storage/sdcard1/Music/lsd_audio_ft._sia_diplo_labrinth_mp3_14138.mp3
+*/30 * * * * backup -s
+0 12 */2 * * backup -sa
 
 
 # vim: ft=crontab
