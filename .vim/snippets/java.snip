@@ -4,6 +4,24 @@ snippet pcl
       ${0}
    }
 
+snippet pce
+   public class ${1:`expand("%:t:r")`} extends ${2:Parent}
+   {
+      ${0}
+   }
+
+snippet pci
+   public class ${1:`expand("%:t:r")`} implements ${2:Interface}
+   {
+      ${0}
+   }
+
+snippet pin
+   public interface ${1:`expand("%:t:r")`}
+   {
+      ${0}
+   }
+
 snippet main
    public static void main(String[] args)
    {
@@ -44,7 +62,7 @@ alias meth method
    }
 
 snippet con
-alias cons construct
+alias cons constr
    public ${1:`expand("%:t:r")`}(${2})
    {
       ${0}

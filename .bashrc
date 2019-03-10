@@ -63,10 +63,12 @@ alias re="tmux rename-window"
 alias ebrc="$EDITOR ~/.bashrc"
 alias evrc="$EDITOR ~/.vimrc"
 alias etrc="$EDITOR ~/.tmux.conf"
+alias eirc="$EDITOR ~/.inputrc"
 alias sbrc="source ~/.bashrc"
 # }}}
 # misc aliases {{{
 alias rm="trash add"
+alias dx="dx $@ 1>/dev/null"
 alias rrm="\rm -r"
 alias mkdir="mkdir -pv"
 alias play="scriptreplay -t replay.timing typescript"

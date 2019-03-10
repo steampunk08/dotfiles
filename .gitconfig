@@ -12,6 +12,7 @@
 	rmc     = rm --cached
    l       = log --decorate --graph
 	unstage = reset HEAD --
+   release = !git archive master --format=zip > release-$(git describe master).zip
 [credential]
 	helper  = store
 

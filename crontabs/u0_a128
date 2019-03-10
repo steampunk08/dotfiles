@@ -6,6 +6,6 @@
 # 35 15 * * * play-audio "/storage/3039-3361/TheBestMeICanBe/Motivation/END LAZINESS - Powerful Motivational Video for Success & Studying 2017.mp4"
 
 0 * * * * backup -s
-0 12 */2 * * backup -sa
+30 23 */2 * * backup -sa
 
 # vim: ft=crontab
