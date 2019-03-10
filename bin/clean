@@ -16,4 +16,7 @@ case $1 in
 
    python)
       rm_error_safe **/*.{pyo,pyc} ;;
+
+   log)
+      rm_error_safe **/*.log ;;
 esac

@@ -2,6 +2,7 @@
 
 BACKUP_NAME=backup-$(date "+%d%m%Y")
 SAVE_SYMLINKS=true
+BACKUP_LOG=$HOME/backup.log
 
 show_usage() {
    cat <<EOF
@@ -58,12 +59,28 @@ else
    EXTENSION=.zip
    COMMAND="zip $OPTIONS $BACKUP_NAME.zip -r9 ${BACKUP_FILES[*]}"
 fi
-COMMAND="$COMMAND 2>>~/backup.log"
+
+date '+%d %b %Y (%T)' >>$BACKUP_LOG
+COMMAND="$COMMAND 2>>$BACKUP_LOG"
 
 if [ $EXPORT_BACKUP ]; then
-   COMMAND_2="mv $BACKUP_NAME${EXTENSION} $BACKUP_FOLDER"
-   COMMAND_2="$COMMAND_2 2>>~/backup.log"
+   COMMAND_2="mv ${BACKUP_NAME}$EXTENSION $BACKUP_FOLDER"
+   COMMAND_2="$COMMAND_2 2>>$BACKUP_LOG"
 fi
+
+ensure_only_10_normal_backups()
+{
+   backups=($(ls $BACKUP_FOLDER/backup-*))
+   targets=($(find $BACKUP_FOLDER/backup-* -mtime +10))
+
+   num=$((${#backups[@]}-10))
+
+   for ((x=0; x < $num; x++)); do
+      rm ${targets[$x]}
+   done
+}
+
+ensure_only_10_normal_backups
 
 tmux has-session 2>/dev/null
 
@@ -74,3 +91,5 @@ else
    tmux -c "$COMMAND"
    [ $EXPORT_BACKUP ] && tmux -c "$COMMAND_2"
 fi
+
+echo >>$BACKUP_LOG
