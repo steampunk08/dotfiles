@@ -16,9 +16,17 @@ _binmgr_complete()
    if [[ chmod =~ $action ]]; then
       return
    elif [[ edit =~ $action ]] || [[ remove =~ $action ]] || [[ $action = rm ]]; then
-      files=$(find $PERSONAL_BIN/ -type f -maxdepth 1 | sed s/.*\\'/'//g | sed s/\\..*//g)
+      files=$(ls -A $PERSONAL_BIN)
+
+      if [[ $cword =~ completions ]]; then
+         files=$(echo $files | sed /completions/d)
+         other=($(ls -A $PERSONAL_BIN/completions/))
+         for i in ${other[@]}; do
+            files+=" completions/$i"
+         done
+      fi
       COMPREPLY=($(compgen -W "$files" "$cword"))
    fi
 }
 
-complete -F _binmgr_complete bin
+complete -F _binmgr_complete -o nospace bin
