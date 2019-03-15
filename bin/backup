@@ -39,6 +39,18 @@ while getopts "asfh" argv; do
    esac
 done
 
+debug()
+{
+   echo $@ >>$BACKUP_LOG
+}
+
+date '+%d %b %Y (%T)' >>$BACKUP_LOG
+if [ $EXPORT_BACKUP ]; then
+   debug "need to export"
+else
+   debug "no need to export"
+fi
+
 if [ -z $BACKUP_FILES ]; then
    BACKUP_FILES=(dotfiles vim-steampunklights vim-swapitems)
    cBACKUP_FILES=""
@@ -60,7 +72,6 @@ else
    COMMAND="zip $OPTIONS $BACKUP_NAME.zip -r9 ${BACKUP_FILES[*]}"
 fi
 
-date '+%d %b %Y (%T)' >>$BACKUP_LOG
 COMMAND="$COMMAND 2>>$BACKUP_LOG"
 
 if [ $EXPORT_BACKUP ]; then
@@ -77,6 +88,7 @@ ensure_only_10_normal_backups()
 
    for ((x=0; x < $num; x++)); do
       rm ${targets[$x]}
+      debug "deleted ${targets[$x]}" 
    done
 }
 

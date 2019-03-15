@@ -125,7 +125,7 @@ export PS1=$(_ps1_gen)
 # }}}
 # utilities functions {{{
 # ls modifications {{{
-DIRCOLORS_PATH=~/.termux/.dircolors
+DIRCOLORS_PATH=~/.dircolors
 
 _refresh_ls_colours() {
    eval $(dircolors -b $DIRCOLORS_PATH 2>/dev/null)

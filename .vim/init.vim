@@ -11,6 +11,7 @@ noremap K <nop>
 " Personal Plugins
 set runtimepath+=~/vim-steampunklights
 set runtimepath+=~/vim-swapitems
+set runtimepath+=~/tiny-syntax
 " set runtimepath+=~/qt5.vim
 " set runtimepath+=~/asm_arm.vim
 
