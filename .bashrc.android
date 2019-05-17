@@ -1,0 +1,10 @@
+#!/usr/bin/bash
+
+CONFIG_VARIATION=android
+DO_TERMUX_LOCK=true
+
+alias pa="play-audio"
+
+source $HOME/dotfiles/.bashrc.union
+
+use_generic_prompt

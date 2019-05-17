@@ -1,0 +1,11 @@
+#!/bin/bash
+
+TOOLS=/media/$USER/SPHEM/tools/builtins
+LOCAL=$HOME/windows-tools
+
+read -p "Enter extension files you want to fetch (without the dot): " extension
+cp $TOOLS/*.$extension $LOCAL;
+
+for i in $LOCAL/*.exe.txt; do
+   mv -f $i ${i%.txt}
+done

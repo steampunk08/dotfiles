@@ -1,0 +1,56 @@
+#!/usr/bin/python3
+
+import argparse
+import os
+import threading
+
+parser = argparse.ArgumentParser(description="Concurrent `mv` command.")
+
+parser.add_argument("source",
+	metavar="SOURCE",
+	help="file or folder to move", nargs="+")
+
+parser.add_argument("-f", "--force",
+	action="store_true",
+	help="do not prompt before overwriting")
+
+parser.add_argument("-v", "--verbose",
+	action="store_true",
+	help="explain what is being done")
+
+parser.add_argument("destination",
+	metavar="DESTINATION",
+	help="folder where source folders will be moved")
+
+
+def move(source, destination, options):
+	os.system("mv %s %s %s" % (options, source, destination))
+
+if __name__ == '__main__':
+	args    = parser.parse_args()
+	options = []
+	threads = []
+
+	if args.force:
+		options.append("-f")
+
+	if args.verbose:
+		options.append("-v")
+
+	for s in args.source:
+		thread = threading.Thread(
+			target=move, args=(s, args.destination, " ".join(options)))
+
+		thread.run()
+		threads.append(thread)
+
+	try:
+		for thread in threads:
+			while thread.isAlive():
+				pass
+
+	except KeyboardInterrupt:
+		print("Ctrl+C")
+
+		for thread in threads:
+			thread.join()

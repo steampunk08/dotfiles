@@ -197,32 +197,6 @@ function! TabeBuffers()
    endfor
 endfunction
 " }}}
-" BoolSwitch {{{
-let g:BOOL_SWITCH_PAIRS = [
-\ ["true", "false"], 
-\ ["True", "False"]
-\ ]
-
-function! BoolSwitch(bool)
-   if exists('g:BOOL_SWITCH_PAIRS')
-      let BOOL_PAIRS = g:BOOL_SWITCH_PAIRS
-   else
-      let BOOL_PAIRS = [["true", "false"], ["True", "False"]]
-   endif
-   for pairs in BOOL_PAIRS
-      let length = len(pairs)
-      for b in pairs
-         if b ==# a:bool
-            let index = index(pairs, b) + 1
-            return pairs[index % length]
-         endif
-      endfor
-   endfor
-   return a:bool
-endfunction
-
-nnoremap <silent> <localleader>t "tyiw:let @f = BoolSwitch(@t)<cr>viw"fp
-" }}}
 " Goto File (extension) {{{
 function! GotoFile(filename)
    let filename = expand(a:filename)
@@ -238,6 +212,15 @@ function! GotoFile(filename)
 endfunction
 
 nnoremap <silent> gf :call GotoFile(expand("<cfile>"))<cr>
+" }}}
+" CreateFold() {{{
+function! CreateFold()
+   execute "normal! \<esc>`>o".'"'.
+      \ " \<esc>3a}\<esc>`<O".'"'.
+      \ " \<esc>3a{\<esc>bhi "
+endfunction
+
+vnoremap <c-f> :call CreateFold()<cr>
 " }}}
 " }}}
 
@@ -319,8 +302,12 @@ if !has('gui_running')
       autocmd!
       autocmd InsertEnter  * set timeoutlen=0
       autocmd InsertLeave  * set timeoutlen=750
-      autocmd CmdlineEnter * set timeoutlen=0
-      autocmd CmdlineLeave * set timeoutlen=750
+
+      try
+         autocmd CmdlineEnter * set timeoutlen=0
+         autocmd CmdlineLeave * set timeoutlen=750
+      catch /E216/
+      endtry
    augroup END
 endif
 " }}}
@@ -331,5 +318,6 @@ command! We w | e
 command! Cd execute 'cd ' . expand('%:h')
 " }}}
 
+syntax on
 "redraw!
 " vim:ts=3:sts=3:sw=3:et

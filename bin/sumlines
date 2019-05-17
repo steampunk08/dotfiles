@@ -1,0 +1,15 @@
+#!/bin/bash
+
+DIR=$1
+if [[ -z $1 ]]; then
+   DIR=$1
+fi
+
+cd $DIR
+sum=0
+
+for l in $(grep -R . -ch); do
+   sum=$((sum + l))
+done
+
+echo Total number of lines in all subdirs is $sum

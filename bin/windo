@@ -1,0 +1,98 @@
+#!/bin/bash
+
+cd $HOME/windows-tools
+
+function run()
+{
+	echo Running $@
+	source $@
+}
+
+function check_within_bounds()
+{
+	if [ $1 -lt $2 ] && [ $2 -ge 0 ]; then
+		echo error: sorry buffer overflow is useless here... quiting!
+		exit 2
+	fi
+}
+
+function check_numeric()
+{
+	if [[ ! $1 =~ ^[0-9] ]]; then
+		echo error: invalid input... quiting!
+		exit 1
+	fi
+}
+
+scripts=($(ls *.sh))
+nscripts=${#scripts[*]}
+
+if [ $nscripts -eq 1 ]; then
+	run *.sh $@
+	exit
+fi
+
+if [ ${#scripts[*]} -gt 1 ] && [ -z $1 ]; then
+	echo "Choose a script (include options):"
+	idx=0
+	for script in ${scripts[*]}; do
+		echo "  $idx)" $script
+		let idx++
+	done
+	read -p "> " choice_with_opts
+	opts=($choice_with_opts)
+
+	check_numeric $opts
+	check_within_bounds $idx $opts
+	script=${scripts[$opts]}
+
+	opts[0]=
+
+	run $script ${opts[*]}
+	exit
+fi
+
+if [[ -n $1 ]]; then
+	if [[ $1 =~ [0-9]+ ]]; then
+		check_within_bounds $nscripts $1
+
+		script=${scripts[$1]}
+		if [ -f $script ];then
+			shift 1
+			run $script $@
+		fi
+	else
+		scripts=($(ls *$1*.sh))
+		if [ ${#scripts[*]} -gt 1 ]; then
+			echo More than one script...
+			echo -n Choose one
+			[[ -z $2 ]] && echo -n "(include options)"
+			echo :
+
+			idx=0
+			for script in ${scripts[*]}; do
+				echo "  $idx)" $script
+				let idx++
+			done
+			read -p "> " choice
+
+			if [ -z $2 ]; then
+				sections=($choice) 
+			else
+				sections=($@)
+				sections[0]=$choice
+			fi
+			
+			check_numeric $sections
+			check_within_bounds $sections $choice
+			script=${scripts[sections]}
+
+			sections[0]=
+			run $script ${sections[*]}
+		else
+			script=$scripts
+			shift 1
+			run $script $@
+		fi
+	fi
+fi

@@ -10,15 +10,22 @@ fi
 
 DOWNLOAD_DIRECTORY=$TERMUX/.debs/
 content=$(cat $1)
+
+if [ ! -d $DOWNLOAD_DIRECTORY ] || 
+   [ ! -d $DOWNLOAD_DIRECTORY/outdated ]; then
+   mkdir -vp $DOWNLOAD_DIRECTORY/outdated
+fi
+
 cd $DOWNLOAD_DIRECTORY
 
 do_download()
 {
    if [ $DRY_RUN ]; then
-      echo wget https://termux.net/$1
+      echo https://termux.net/$1
       return 0
    fi
-   wget https://termux.net/$1
+   wget --continue https://termux.net/$1
+   return $?
 }
 
 fsize()
@@ -31,21 +38,63 @@ fsize()
    fi
 }
 
+totalSize=0
+totalDownloadSize=0
+
 for line in $content; do
-   if [[ $line =~ ^Filename:\ (.+) ]]; then
-      filename_extended=${BASH_REMATCH[1]}
-      filename=$(basename $filename_extended)
+   downloaded=
+
+   if [[ $line =~ ^Filename:\ ((.+)_(.+)_.+) ]]; then
+      version=${BASH_REMATCH[3]}
+      name_extended=${BASH_REMATCH[1]}
+      name_no_version=$(basename ${BASH_REMATCH[2]})
+      name=$(basename $name_extended)
+
+      cname=$(ls ${name_no_version}_* 2>/dev/null)
+      cversion=0
+
+      [[ $cname =~ _(.+)_ ]] && cversion=${BASH_REMATCH[1]}
+
+      if [[ $cversion != $version ]]; then
+         if [ ! $DRY_RUN ]; then
+            do_download $name_extended
+
+            if [ $? -ne 0 ] && [[ $name =~ ]]; then
+            fi
+
+            if [[ -n $cname ]] && [ $? -eq 0 ]; then
+               mv $cname $DOWNLOAD_DIRECTORY/outdated
+            fi
+         else
+            name_no_version=$(printf '%+20s' $name_no_version)
+            if [[ -z $cname ]]; then
+               echo $name_no_version: new deb file
+            else
+               cversion=$(printf '%-8s' $cversion)
+               version_info="| $cversion - ($version)"
+               echo $name_no_version: new version out $version_info
+            fi
+         fi
+         downloaded=true
+      fi
    fi
+
    if [[ $line =~ ^Size:\ ([0-9]+) ]]; then
-      size_of_found=$(fsize $filename)
-      actual_size=${BASH_REMATCH[1]}
-      
-      if [ $size_of_found -ne $actual_size ]; then
-         do_download $filename_extended
+      size=${BASH_REMATCH[1]}
+      totalSize=$((totalSize + size))
+
+      if [ $downloaded ]; then
+         totalDownloadSize=$((totalDownloadSize + size))
       fi
    fi
 done
 
-IFS=$sIFS
+totalDownloadSize=$(sfc -p 2 $((totalDownloadSize/1024))/1024)
+totalSize=$(sfc -p 2 $((totalSize/1024))/1024)
 
+echo
+echo Total size of the download is $totalDownloadSize mb
+echo Total packages size is $totalSize mb
+
+IFS=$sIFS
 cd $OLDPWD

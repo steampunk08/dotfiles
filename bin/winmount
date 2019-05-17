@@ -1,0 +1,22 @@
+#!/usr/bin/bash
+
+usage()
+{
+   echo usage: $0 device [mount_point]
+}
+
+if [[ -z $1 ]]; then
+   usage
+   exit 1
+fi
+
+mount_point=${2:-/media/$USER/Acer}
+
+[ ! -d $mount_point ] && mkdir -pv $mount_point
+
+ntfsfix $1
+mount -o remove_hiberfile,remount $1 2>/dev/null
+
+if [ $? -ne 0 ]; then
+    mount -o remove_hiberfile $1 $mount_point
+fi

@@ -1,0 +1,142 @@
+#!/usr/bin/bash
+# Siphesihle Mhlongo's Bash Config
+
+export SHELL=$PREFIX/bin/bash
+export MYPATH=$HOME/mybin
+export PATH=$MYPATH:$HOME/bin:$PATH:.
+export TERM=xterm-256color
+export EDITOR=nvim
+export PAGER=less
+export HISTCONTROL=ignoredups
+export CRONTABS_DIR=$HOME/crontabs
+export COMP_DIRECTORY=$HOME/mybin/completions
+
+# Android only
+export EXTCARD=/storage/3039-3361
+export TERMUX=$EXTCARD/Android/data/com.termux/
+
+export DEBS_DIRECTORY=${DEBS_DIRECTORY:-$TERMUX/.debs} # except this one
+
+[[ -z $USERNAME ]] && USERNAME="Sphe M"
+
+export XDG_CONFIG_HOME=$HOME/.config
+
+export LESS="Ri"
+export LESS_TERMCAP_mb=$'\e[38;5;154m'
+export LESS_TERMCAP_md=$'\e[38;5;105m'
+export LESS_TERMCAP_me=$'\e[0m'
+export LESS_TERMCAP_us=$'\e[01;38;5;154m'
+export LESS_TERMCAP_ue=$'\e[0m'
+export LESS_TERMCAP_so=$'\e[30;48;5;111m'
+export LESS_TERMCAP_se=$'\e[0m'
+
+if [[ -f ~/.addon ]]; then
+   export ADDONS_FOLDER=$(cat ~/.addon)
+else
+   export ADDONS_FOLDER=~/addons
+fi
+
+#set -o vi
+
+shopt -s autocd
+shopt -s direxpand
+shopt -s globasciiranges globstar dotglob
+shopt -s interactive_comments
+shopt -s lithist
+
+if [[ -z $(pgrep cron) ]]; then
+   cron -c $CRONTABS_DIR
+fi
+
+# always have a session running
+if [ $DO_TMUX_LOCK ]; then
+   tmux has-session 2>/dev/null
+   if [ $? -ne 0 ]; then
+      echo -n
+      tmux new-session -s def -n editor 2>/dev/null
+   fi
+fi
+
+for f in $COMP_DIRECTORY/*-completion.bash; do
+   source $f
+done
+
+# prompt color shorthands
+COLOR_USERNAME="\e[38;5;105m"
+COLOR_TODO="\e[38;5;244m"
+COLOR_SIZE="\e[38;5;220m"
+COLOR_PATH="\e[38;5;111m"
+CC="\e[0m"
+
+_todo_list() {
+   todo -l | while read line; do echo "   $line"; done
+}
+
+_tr() {
+   echo -en $COLOR_PATH
+   if [[ $1 == "home" ]]; then
+      echo -n '$HOME'
+   else
+      echo -n $1
+   fi
+}
+_curdir_seg1() {
+   before_base=$(basename $(realpath ..))
+   _tr $before_base
+}
+   
+_curdir_seg2() {
+   path_base=$(basename $(pwd))
+   _tr $path_base
+}
+
+_pwd() {
+   _curdir_seg1
+   echo -en "\e[0m/"
+   _curdir_seg2
+}
+
+_ps1_gen() {
+   SECTION_1="${COLOR_USERNAME}$USERNAME$CC [ $COLOR_SIZE\$(lsbytesum)$CC ]( $COLOR_PATH\$(_curdir_seg2)$CC )"
+   SECTION_2="$COLOR_TODO\$(_todo_list)$CC"
+   SECTION_3="-\$ "
+
+   echo "\n$SECTION_1\n$SECTION_2\n$SECTION_3"
+}
+
+use_generic_prompt()
+{
+   PS1=$(_ps1_gen)
+}
+
+addman() {
+   if [[ $1 =~ \.gz$ ]]; then
+      gunzip -k $1
+   fi
+   MAN_DIR=$PREFIX/share/man
+   if [[ -z $2 ]]; then
+      name=$(basename $1 .gz)
+      mv $name $MAN_DIR/man1
+   else
+      mv $name $MAN_DIR/man${2}
+   fi
+   makewhatis $MAN_DIR
+}
+
+fsize() { ls -l "$@" | awk '{ print $5 }'; }
+
+for path in $HOME/Programs/*; do
+   if [ -d $path/bin ]; then
+      PATH="$PATH:$path/bin"
+   else
+      PATH="$PATH:$path"
+   fi
+done
+
+if [ -f ~/.bash_aliases ]; then
+    source ~/.bash_aliases
+fi
+
+trash enable
+
+# vim: fdm=marker fdl=0
