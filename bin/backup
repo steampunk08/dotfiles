@@ -2,6 +2,7 @@
 
 BACKUP_NAME=backup-$(date "+%d%m%Y")
 SAVE_SYMLINKS=true
+BACKUP_LOG=$HOME/backup.log
 
 show_usage() {
    cat <<EOF
@@ -38,8 +39,25 @@ while getopts "asfh" argv; do
    esac
 done
 
+debug()
+{
+   echo $@ >>$BACKUP_LOG
+}
+
+date '+%d %b %Y (%T)' >>$BACKUP_LOG
+if [ $EXPORT_BACKUP ]; then
+   debug "need to export"
+else
+   debug "no need to export"
+fi
+
 if [ -z $BACKUP_FILES ]; then
-   BACKUP_FILES=(dotfiles vim-steampunklights vim-swapcase)
+   BACKUP_FILES=(dotfiles vim-steampunklights vim-swapitems)
+   cBACKUP_FILES=""
+   for f in ${BACKUP_FILES[*]}; do
+      cBACKUP_FILES+="$f "
+   done
+   BACKUP_FILES=($cBACKUP_FILES)
 fi
 
 if [ $SAVE_SYMLINKS ]; then
@@ -54,9 +72,27 @@ else
    COMMAND="zip $OPTIONS $BACKUP_NAME.zip -r9 ${BACKUP_FILES[*]}"
 fi
 
+COMMAND="$COMMAND 2>>$BACKUP_LOG"
+
 if [ $EXPORT_BACKUP ]; then
-   COMMAND_2="mv $BACKUP_NAME${EXTENSION} $BACKUP_FOLDER"
+   COMMAND_2="mv ${BACKUP_NAME}$EXTENSION $BACKUP_FOLDER"
+   COMMAND_2="$COMMAND_2 2>>$BACKUP_LOG"
 fi
+
+ensure_only_10_normal_backups()
+{
+   backups=($(ls $BACKUP_FOLDER/backup-*))
+   targets=($(find $BACKUP_FOLDER/backup-* -mtime +10))
+
+   num=$((${#backups[@]}-10))
+
+   for ((x=0; x < $num; x++)); do
+      rm ${targets[$x]}
+      debug "deleted ${targets[$x]}" 
+   done
+}
+
+ensure_only_10_normal_backups
 
 tmux has-session 2>/dev/null
 
@@ -64,12 +100,8 @@ if [ $? -ne 0 ] || [ $FOREGROUND ]; then
    $COMMAND
    [ $EXPORT_BACKUP ] && $COMMAND_2
 else
-   tmux new-window -d -c $HOME -n backup -t 10
-   tmux send-keys -t :10 "$COMMAND" C-m
-   if [ $EXPORT_BACKUP ]; then
-      tmux send-keys -t :10 "$COMMAND_2" C-m
-      tmux send-keys -t :10 "exit" C-m
-   fi
+   tmux -c "$COMMAND"
+   [ $EXPORT_BACKUP ] && tmux -c "$COMMAND_2"
 fi
 
-cd $OLDPWD
+echo >>$BACKUP_LOG

@@ -286,6 +286,7 @@ augroup END
 
 augroup EDITOR_MODE
    autocmd Filetype markdown setlocal textwidth=78
+   autocmd Filetype gitcommit setlocal spell
 augroup END
 
 augroup SETTING_FILETYPES

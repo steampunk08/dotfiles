@@ -40,5 +40,7 @@ while getopts "celh" option; do
 done
 
 if [[ $option == "?" ]] && [[ -n $1 ]]; then
-   echo $@ >> $TODO_PATH 
+   sed /^$/d "$TODO_PATH" -i
+
+   echo $@ >> $TODO_PATH
 fi

@@ -1,0 +1,22 @@
+#!/bin/bash
+
+shopt -s globstar dotglob
+
+rm_error_safe()
+{
+   rm $@ 2>/dev/null 
+}
+
+case $1 in
+   java)
+      rm_error_safe **/*.{class,dex} ;;
+
+   vim)
+      rm_error_safe **/*.{swo,swn,swp} ;;
+
+   python)
+      rm_error_safe **/*.{pyo,pyc} ;;
+
+   log)
+      rm_error_safe **/*.log ;;
+esac

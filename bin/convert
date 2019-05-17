@@ -260,9 +260,17 @@ if __name__ == "__main__":
 
         if not complete:
             raise SyntaxError("Array must consist of all 'float's or all 'int's")
+<<<<<<< HEAD
+=======
+
+>>>>>>> 893c67ed8ed55370872ffc341883b76b9ea7c4a1
         print_pretty(h, f, i)
 
     else:
         raise SyntaxError("Invalid number of arguments, should be 1, 3 or 4")
+<<<<<<< HEAD
+=======
+
+>>>>>>> 893c67ed8ed55370872ffc341883b76b9ea7c4a1
         print_pretty(h, f, i)
 

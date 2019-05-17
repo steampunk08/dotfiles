@@ -1,0 +1,40 @@
+#!/bin/bash
+
+if [[ -z $PERSONAL_BIN ]]; then
+   PERSONAL_BIN=$HOME/bin
+fi
+
+case $1 in
+   c|ch|chmod)
+      chmod +x $(find $PERSONAL_BIN/ -type f -maxdepth 1) ;;
+
+   e|ed|edit)
+      if [[ -z $2 ]]; then
+         echo "Enter the name of the script you want to edit."
+         exit 1
+      fi
+      $EDITOR $PERSONAL_BIN/$2 ;;
+
+   ls|list)
+      ls $PERSONAL_BIN ;;
+
+   rm|remove)
+      if [[ -z $2 ]]; then
+         echo "Enter the name of the script you want to delete."
+         exit 1
+      fi
+      shift 1
+
+      for s in $@; do
+         if [ -f $PERSONAL_BIN/$s ]; then
+            p="Are you sure you want to delete '$s' script (Y/n)? "
+            read -p "$p" reply
+
+            if [[ $reply =~ (Y|y) ]]; then
+               rm $PERSONAL_BIN/$s
+            else
+               echo "Did not delete '$s' script"
+            fi 
+         fi
+      done ;;
+esac

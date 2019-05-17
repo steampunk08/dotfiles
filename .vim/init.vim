@@ -11,7 +11,11 @@ noremap K <nop>
 " Personal Plugins
 set runtimepath+=~/vim-steampunklights
 set runtimepath+=~/vim-swapitems
+<<<<<<< HEAD
 set guifont=Monospace\ 9
+=======
+set runtimepath+=~/tiny-syntax
+>>>>>>> 893c67ed8ed55370872ffc341883b76b9ea7c4a1
 " set runtimepath+=~/qt5.vim
 " set runtimepath+=~/asm_arm.vim
 

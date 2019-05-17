@@ -13,7 +13,7 @@ esac
 
 if [ ${#@} -gt 1 ]; then
    for filename in ${@}; do
-      basefname=$(basename ${filename} .asm)
+      basefname=${filename%.asm}
 
       as -g -o $basefname.o $filename
       FILES="$basefname.o $FILES"

@@ -4,6 +4,24 @@ snippet pcl
       ${0}
    }
 
+snippet pce
+   public class ${1:`expand("%:t:r")`} extends ${2:Parent}
+   {
+      ${0}
+   }
+
+snippet pci
+   public class ${1:`expand("%:t:r")`} implements ${2:Interface}
+   {
+      ${0}
+   }
+
+snippet pin
+   public interface ${1:`expand("%:t:r")`}
+   {
+      ${0}
+   }
+
 snippet main
    public static void main(String[] args)
    {
@@ -12,6 +30,9 @@ snippet main
 
 snippet sout
    System.out.println(${1});
+
+snippet print
+   System.out.print(${1});
 
 snippet pcsvm
    public class `expand("%:t:r")`
@@ -34,13 +55,14 @@ snippet var
    ${1:public} ${2} ${3:name}${4: = ${0:\}};
 
 snippet me
+alias meth method
    public ${1} ${2:name}(${3})
    {
       ${0}
    }
 
 snippet con
-alias cons
+alias cons constr
    public ${1:`expand("%:t:r")`}(${2})
    {
       ${0}

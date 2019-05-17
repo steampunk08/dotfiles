@@ -20,7 +20,7 @@ _apt_complete()
    --fix-policy"
 
    if [ $COMP_CWORD -eq 1 ]; then
-      COMPREPLY=($(compgen -W "$commands" "${COMP_WORDS[1]}"))
+      COMPREPLY=($(compgen -W "$commands" "'${COMP_WORDS[1]}'"))
    else
       local options
       case ${COMP_WORDS[1]} in

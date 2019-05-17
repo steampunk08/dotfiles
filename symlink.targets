@@ -1,17 +1,24 @@
---SOFT--
+# save files under base directory
+.:
 .termux
 .shortcuts
-.vifm
 .vim
-addons
-bin
-zsource
-crontabs
-
---HARD--
+.zsh
 .bashrc
 .vimrc
+.zshrc.(DEVICE) # env variable expansion
 .zshrc
 .tmux.conf
 .gitconfig
 .lesskey
+addons
+plugins.vim
+bin
+crontabs
+
+# save files under .config
+.config:
+.vifm
+
+# create the alias nvim pointing to .vim
+.vim as nvim
