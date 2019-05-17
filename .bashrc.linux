@@ -16,9 +16,6 @@ PREFIX=/usr/
 
 source $HOME/dotfiles/.bashrc.union
 
-add_path $HOME/bin
-add_path $HOME/mybin
-
 for path in $HOME/Programs/*; do
    if [ -d $path/bin ]; then
       PATH="$PATH:$path/bin"
