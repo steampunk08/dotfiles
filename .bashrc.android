@@ -1,9 +1,28 @@
 #!/usr/bin/bash
 
-CONFIG_VARIATION=android
-DO_TERMUX_LOCK=true
+export CONFIG_VARIATION=android
+export DO_TERMUX_LOCK=true
+
+export EXTCARD=/storage/3039-3361
+export TERMUX=$EXTCARD/Android/data/com.termux/
+
+export DEBS_DIRECTORY=${DEBS_DIRECTORY:-$TERMUX/.debs}
 
 alias pa="play-audio"
+
+addman() {
+   if [[ $1 =~ \.gz$ ]]; then
+      gunzip -k $1
+   fi
+   MAN_DIR=$PREFIX/share/man
+   if [[ -z $2 ]]; then
+      name=$(basename $1 .gz)
+      mv $name $MAN_DIR/man1
+   else
+      mv $name $MAN_DIR/man${2}
+   fi
+   makewhatis $MAN_DIR
+}
 
 source $HOME/dotfiles/.bashrc.union
 
