@@ -9,7 +9,7 @@ D=setup-scripts
 source $D/utils.bash
 
 clear
-echo_normal Starting Setup Script
+echo_normal "Starting Setup Script"
 
 SCRIPT_NAME=$(basename $0)
 SCRIPT_PATH=$(realpath ${0%${SCRIPT_NAME}})

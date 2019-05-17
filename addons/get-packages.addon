@@ -59,8 +59,8 @@ for line in $content; do
          if [ ! $DRY_RUN ]; then
             do_download $name_extended
 
-            if [ $? -ne 0 ] && [[ $name =~ ]]; then
-            fi
+            # if [ $? -ne 0 ] && [[ $name =~ ]]; then
+            # fi
 
             if [[ -n $cname ]] && [ $? -eq 0 ]; then
                mv $cname $DOWNLOAD_DIRECTORY/outdated

@@ -98,12 +98,12 @@ _tr() {
    fi
 }
 _curdir_seg1() {
-   before_base=$(basename $(realpath ..))
+   before_base=$(basename "$(realpath ..)")
    _tr $before_base
 }
    
 _curdir_seg2() {
-   path_base=$(basename $(pwd))
+   path_base=$(basename "$(pwd)")
    _tr $path_base
 }
 

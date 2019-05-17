@@ -5,10 +5,17 @@ show_usage() {
    exit 1
 }
 
+dir="."
+
 if [[ -n $1 ]]; then
-   [[ $1 =~ -(R|-recurse) ]] && files=$(ls -alR) || show_usage
+   [[ -n $2 ]] && dir=$2
+   if [[ $1 =~ -(R|-recurse) ]]; then
+      files=$(ls -alR $dir)
+   else
+      files=$(ls -l $1)
+   fi
 else
-   files=$(ls -l)
+   files=$(ls -l $dir)
 fi
 
 total=0

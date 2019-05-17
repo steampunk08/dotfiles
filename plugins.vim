@@ -16,7 +16,6 @@ Plugin 'tikhomirov/vim-glsl'
 Plugin 'ap/vim-css-color'
 Plugin 'dag/vim-fish'
 Plugin 'pprovost/vim-ps1'
-Plugin 'kien/rainbow_parentheses.vim'
 Plugin 'valloric/matchtagalways'
 Plugin 'octol/vim-cpp-enhanced-highlight'
 
@@ -35,7 +34,6 @@ Plugin 'vimwiki/vimwiki'
 
 " completion
 Plugin 'jiangmiao/auto-pairs'
-Plugin 'myhere/vim-nodejs-complete'
 Plugin 'shougo/deoplete.nvim'
 Plugin 'shougo/neosnippet.vim'
 

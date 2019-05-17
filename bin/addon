@@ -51,40 +51,50 @@ if [[ -z $ADDONS_FOLDER ]]; then
       change_folder $ADDONS_FOLDER
    fi
 fi
+AVAILABLE_ADDONS=($ADDONS_FOLDER/*.addon)
+for i in ${AVAILABLE_ADDONS[@]}; do chmod -x $i; done
 
-while getopts "d:e:h" option; do
+while getopts "d:e:hl" option; do
    case $option in
       d )
-         name=$ADDONS_FOLDER/${OPTARG%.addon}.addon
-         if [ ! -f $name ]; then
-            echo "file $OPTARG.addon does not exist!"
-            exit 1
-         fi
-         echo "$(basename $name) is about to be deleted"
-         read -p "You sure you want to continue (Y/n)? " response
+         for opt in $@; do
+            name=$ADDONS_FOLDER/${opt%.addon}.addon
+            if [ ! -f $name ]; then
+               echo "file $OPTARG.addon does not exist!"
+               exit 1
+            fi
+            echo "$(basename $name) is about to be deleted"
+            read -p "You sure you want to continue (Y/n)? " response
 
-         if [[ $response =~ [Yy](es)? ]]; then
-            rm $name
-         fi
+            if [[ $response =~ [Yy](es)? ]]; then
+               rm $name
+            fi
+         done
          exit 0 ;;
       e )
          if [ -z $EDITOR ]; then
             echo please set the \$EDITOR variable
             exit 1
          else
-            name=$ADDONS_FOLDER/${OPTARG%.addon}.addon
-            if [ ! -f $name ]; then
-               echo '#!/bin/bash' > $name
-            fi
-            $EDITOR $name
+            shift 1
+            for opt in $@; do
+               name=$ADDONS_FOLDER/${opt%.addon}.addon
+               if [ ! -f $name ]; then
+                  echo '#!/bin/bash' > $name
+               fi
+               names+=" $name"
+            done
+            $EDITOR $names -p
             exit 0
          fi ;;
+      l )
+         shift 1
+         ls $ADDONS_FOLDER
+         exit 0 ;;
       h ) show_usage ;;
       * ) show_usage && exit 1 ;;
    esac
 done
-
-AVAILABLE_ADDONS=($ADDONS_FOLDER/*.addon)
 
 if [ -z $AVAILABLE_ADDONS ]; then
    echo -e ${_NORMAL}no ${_FILE}.addon${_NORMAL} files \
