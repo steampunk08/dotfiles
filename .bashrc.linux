@@ -10,6 +10,12 @@ fi
 
 PS1='${debian_chroot:+($debian_chroot)}\[\033[01;31m\]\u@\h\[\033[00m\]:\[\033[01;34m\]\w\[\033[00m\]\$ '
 
+CONFIG_VARIATION=desktop
+DO_TERMUX_LOCK=false
+PREFIX=/usr/
+
+source $HOME/dotfiles/.bashrc.union
+
 add_path $HOME/bin
 add_path $HOME/mybin
 
@@ -21,11 +27,6 @@ for path in $HOME/Programs/*; do
    fi
 done
 
-CONFIG_VARIATION=desktop
-DO_TERMUX_LOCK=false
-PREFIX=/usr/
-
-source $HOME/dotfiles/.bashrc.union
 load_completions $HOME/mybin
 
 # vim: ft=sh

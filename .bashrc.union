@@ -80,35 +80,35 @@ COLOR_SIZE="\e[38;5;220m"
 COLOR_PATH="\e[38;5;111m"
 CC="\e[0m"
 
-_todo_list() {
+todo_list() {
    todo -l | while read line; do echo "   $line"; done
 }
 
-_tr() {
+translate() {
    echo -en $COLOR_PATH
-   if [[ $1 == "home" ]]; then
+   if [[ $1 =~ home(/.+)? ]] || [[ $1 == "root" ]]; then
       echo -n '$HOME'
    else
       echo -n $1
    fi
 }
-_curdir_seg1() {
+curdir_segment_1() {
    before_base=$(basename "$(realpath ..)")
    _tr $before_base
 }
    
-_curdir_seg2() {
+curdir_segment_2() {
    path_base=$(basename "$(pwd)")
    _tr $path_base
 }
 
-_pwd() {
-   _curdir_seg1
+pwd() {
+   curdir_segment_1
    echo -en "\e[0m/"
-   _curdir_seg2
+   curdir_segment_2
 }
 
-_ps1_gen() {
+generate_prompt() {
    SECTION_1="${COLOR_USERNAME}$USER$CC [ $COLOR_SIZE\$(lsbytesum)$CC ]( $COLOR_PATH\$(_curdir_seg2)$CC )"
    SECTION_2="$COLOR_TODO\$(_todo_list)$CC"
    SECTION_3="-\$ "
@@ -118,7 +118,7 @@ _ps1_gen() {
 
 use_generic_prompt()
 {
-   PS1=$(_ps1_gen)
+   PS1=$(generate_prompt)
 }
 
 fsize() { ls -l "$@" | awk '{ print $5 }'; }
@@ -126,7 +126,5 @@ fsize() { ls -l "$@" | awk '{ print $5 }'; }
 if [ -f ~/.bash_aliases ]; then
     source ~/.bash_aliases
 fi
-
-trash enable
 
 # vim: fdm=marker fdl=0
