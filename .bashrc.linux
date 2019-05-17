@@ -1,11 +1,5 @@
 #!/usr/bin/bash
 
-# If not running interactively, don't do anything
-case $- in
-    *i*) ;;
-      *) return;;
-esac
-
 # make less more friendly for non-text input files, see lesspipe(1)
 [ -x /usr/bin/lesspipe ] && eval "$(SHELL=/bin/sh lesspipe)"
 
@@ -16,14 +10,8 @@ fi
 
 PS1='${debian_chroot:+($debian_chroot)}\[\033[01;31m\]\u@\h\[\033[00m\]:\[\033[01;34m\]\w\[\033[00m\]\$ '
 
-# If this is an xterm set the title to user@host:dir
-case "$TERM" in
-xterm*|rxvt*)
-    PS1="\[\e]0;${debian_chroot:+($debian_chroot)}\u@\h: \w\a\]$PS1"
-    ;;
-*)
-    ;;
-esac
+add_path $HOME/bin
+add_path $HOME/mybin
 
 for path in $HOME/Programs/*; do
    if [ -d $path/bin ]; then
@@ -38,8 +26,6 @@ DO_TERMUX_LOCK=false
 PREFIX=/usr/
 
 source $HOME/dotfiles/.bashrc.union
-
-MYPATH=$HOME/mybin
-load_completions
+load_completions $HOME/mybin
 
 # vim: ft=sh

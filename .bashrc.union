@@ -2,7 +2,6 @@
 # Siphesihle Mhlongo's Bash Config
 
 export SHELL=$PREFIX/bin/bash
-export PATH=$MYPATH:$HOME/bin:$PATH:.
 export TERM=xterm-256color
 export EDITOR=nvim
 export PAGER=less
@@ -63,9 +62,11 @@ if [ $DO_TMUX_LOCK ]; then
    fi
 fi
 
+add_path() { export PATH="$1:$PATH"; }
+
 load_completions()
 {
-   export COMP_DIRECTORY=$MYPATH/completions
+   export COMP_DIRECTORY=$1/completions
 
    for f in $COMP_DIRECTORY/*-completion.bash; do
       source $f
