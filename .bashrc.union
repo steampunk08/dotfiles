@@ -2,7 +2,6 @@
 # Siphesihle Mhlongo's Bash Config
 
 export SHELL=$PREFIX/bin/bash
-export MYPATH=$HOME/mybin
 export PATH=$MYPATH:$HOME/bin:$PATH:.
 export TERM=xterm-256color
 export EDITOR=nvim
@@ -16,10 +15,12 @@ export EDITOR=nvim
 export PAGER=less
 export EXTCARD=/storage/3039-3361
 export TERMUX=$EXTCARD/Android/data/com.termux/
+
+export HISTSIZE=1000
+export HISTFILESIZE=2000
 export HISTCONTROL=erasedups:ignoredups
 
 export CRONTABS_DIR=$HOME/crontabs
-export COMP_DIRECTORY=$HOME/mybin/completions
 
 USER=${USER:-"Sphe M"}
 
@@ -62,9 +63,14 @@ if [ $DO_TMUX_LOCK ]; then
    fi
 fi
 
-for f in $COMP_DIRECTORY/*-completion.bash; do
-   source $f
-done
+load_completions()
+{
+   export COMP_DIRECTORY=$MYPATH/completions
+
+   for f in $COMP_DIRECTORY/*-completion.bash; do
+      source $f
+   done
+}
 
 # prompt stuff
 COLOR_USERNAME="\e[38;5;105m"
@@ -115,14 +121,6 @@ use_generic_prompt()
 }
 
 fsize() { ls -l "$@" | awk '{ print $5 }'; }
-
-for path in $HOME/Programs/*; do
-   if [ -d $path/bin ]; then
-      PATH="$PATH:$path/bin"
-   else
-      PATH="$PATH:$path"
-   fi
-done
 
 if [ -f ~/.bash_aliases ]; then
     source ~/.bash_aliases

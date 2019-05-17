@@ -27,3 +27,6 @@ addman() {
 source $HOME/dotfiles/.bashrc.union
 
 use_generic_prompt
+
+MYPATH=$HOME/bin
+load_completions
