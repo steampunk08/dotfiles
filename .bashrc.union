@@ -21,7 +21,7 @@ export HISTCONTROL=erasedups:ignoredups
 export CRONTABS_DIR=$HOME/crontabs
 export COMP_DIRECTORY=$HOME/mybin/completions
 
-[[ -z $USERNAME ]] && USERNAME="Sphe M"
+USER=${USER:-"Sphe M"}
 
 export XDG_CONFIG_HOME=$HOME/.config
 
@@ -102,7 +102,7 @@ _pwd() {
 }
 
 _ps1_gen() {
-   SECTION_1="${COLOR_USERNAME}$USERNAME$CC [ $COLOR_SIZE\$(lsbytesum)$CC ]( $COLOR_PATH\$(_curdir_seg2)$CC )"
+   SECTION_1="${COLOR_USERNAME}$USER$CC [ $COLOR_SIZE\$(lsbytesum)$CC ]( $COLOR_PATH\$(_curdir_seg2)$CC )"
    SECTION_2="$COLOR_TODO\$(_todo_list)$CC"
    SECTION_3="-\$ "
 

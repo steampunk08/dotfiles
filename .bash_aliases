@@ -2,7 +2,7 @@
 
 # enable color support of ls and also add handy aliases
 
-DIRCOLORS_PATH=~/.termux/.dircolors
+DIRCOLORS_PATH=~/.dircolors
 
 _refresh_ls_colours() {
    eval $(dircolors -b $DIRCOLORS_PATH 2>/dev/null)
