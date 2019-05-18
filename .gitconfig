@@ -4,7 +4,7 @@
 [github]
    user    = steampunk08
 [core]
-	editor  = vim
+	editor  = nvim
 [alias]
 	s       = status
    set     = config --global

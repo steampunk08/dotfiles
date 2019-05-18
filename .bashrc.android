@@ -1,7 +1,7 @@
 #!/usr/bin/bash
 
 export CONFIG_VARIATION=android
-export DO_TERMUX_LOCK=true
+export DO_TMUX_LOCK=true
 
 export EXTCARD=/storage/3039-3361
 export TERMUX=$EXTCARD/Android/data/com.termux/
