@@ -105,12 +105,12 @@ curdir_segment_2() {
 
 working_path() {
    curdir_segment_1
-   echo -en "\e[0m/"
+   echo -en $CC
    curdir_segment_2
 }
 
 generate_prompt() {
-   SECTION_1_1="${COLOR_USERNAME}$USER$CC"
+   SECTION_1_1="${COLOR_USERNAME}$USER$CC "
    SECTION_1_2="[ $COLOR_SIZE\$(lsbytesum)$CC ]"
    SECTION_1_3="( $COLOR_PATH\$(curdir_segment_2)$CC )"
 
