@@ -1,46 +1,64 @@
-#!/usr/bin/bash
+#!/usr/bin/python3
 
-# To-do manager... mostly used for my prompt
+#      author: Sphe M
+# description: python version of my todo script 
+#        date: 23 May 2019
 
-[[ -z $TODO_PATH ]] && TODO_PATH=~/.todo
-[[ -f $TODO_PATH ]] || touch $TODO_PATH
+import os
+import argparse
 
-function show_usage() { 
-   cat <<EOF
-script to manage todo's in \$TODO_PATH
+TODO_FILENAME=os.environ.get("TODO_PATH", os.environ["HOME"] + "/.todo")
+EDITOR=os.environ.get("EDITOR", "vim")
 
-Usage: todo [option] [message]
+parser = argparse.ArgumentParser(
+	description="script to manage todo's in $TODO_PATH",
+	epilog="simple todo script written in python")
 
-Options"
-    -c, clear the todo file before writing [message]
-    -e, use \$EDITOR to edit todo file
-    -h, show this message
-    -l, list all todos
+parser.add_argument("-c", "--clear", action="store_true",
+	help="clear the todo file before writing MESSAGE")
 
-Todo script written by Sphe M
-EOF
-   exit 1
-}
 
-list_todos() {
-   todos=$(cat $TODO_PATH 2>/dev/null)
-   [[ -z $todos ]] && todos="you don't have any todos"
+parser.add_argument("-e", "--edit", action="store_true",
+	 help="use $EDITOR to edit todo file")
 
-   echo -n "$todos" | awk '{ print "* "$0 }'
-}
+parser.add_argument("-f", "--format",
+	help="format to use when printing the todo's")
 
-while getopts "celh" option; do
-   case $option in
-      c ) echo -n > $TODO_PATH && exit ;;
-      e ) $EDITOR $TODO_PATH ;;
-      l ) list_todos && exit ;;
-      h ) show_usage ;;
-      * ) show_usage ;;
-   esac
-done
+parser.add_argument("-l", "--list", action="store_true",
+	help="list all todos using FORMAT")
 
-if [[ $option == "?" ]] && [[ -n $1 ]]; then
-   sed /^$/d "$TODO_PATH" -i
+parser.add_argument("message",
+	nargs="*", help="todo message to write")
 
-   echo $@ >> $TODO_PATH
-fi
+args = parser.parse_args()
+
+def read_todos(filename):
+	with open(filename, "r") as f:
+		return list(f)
+
+def write_file(filename, message, mode="a"):
+	if not len(message): return
+	
+	with open(filename, mode) as f:
+		f.write(message + "\n")
+
+def list_todos(bullet):
+	for i in read_todos(TODO_FILENAME):
+		if i.startswith("\n"):
+			continue
+		print("%s%s" % (bullet, i.rstrip()))
+
+if __name__ == '__main__':
+	if args.edit:
+		os.system("%s %s" % (EDITOR, TODO_FILENAME))
+
+	else:
+		mode = "w" if args.clear else "a"
+		message = "" if not len(args.message) else " ".join(args.message)
+		write_file(TODO_FILENAME, message, mode)
+
+	if args.list:
+		bullet_format = "* " if args.format is None \
+			else args.format
+
+		list_todos(bullet_format)

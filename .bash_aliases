@@ -14,7 +14,7 @@ alias ll='ls -l'
 alias lf='ls -CF'
 
 if [ -x /usr/bin/dircolors ]; then
-    alias dir='dir --color=auto'dircolors
+    alias dir='dir --color=auto'
     alias vdir='vdir --color=auto'
 
     alias grep='grep --color=auto'
@@ -23,12 +23,14 @@ if [ -x /usr/bin/dircolors ]; then
 fi
 
 # misc. aliases
-alias cp="cp -r"
+alias timeit="python3 -m timeit"
+alias cp="cp -rv"
+alias dd="dd status=progress"
 alias apti="apt -y install"
 alias aptr="apt autoremove"
 
 alias rm="trash add"
-alias rrm="\rm -r"
+alias rrm="\rm -rv"
 alias mkdir="mkdir -pv"
 alias play="scriptreplay -t replay.timing typescript"
 alias crontab="crontab -c $CRONTABS_DIR"

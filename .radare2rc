@@ -18,3 +18,10 @@ e asm.relsub = false
 
 # show size of opcodes
 e asm.size = true
+
+# more decriptive comments
+e asm.emu = true
+
+aa
+
+e key.f4 = p

@@ -1,4 +1,25 @@
-#!/usr/bin/bash
+#!/usr/bin/python3
 
-mkdir -p $HOME/downloads/$@
-git clone "https://github.com/${@}" $HOME/$@
+import argparse
+import os
+
+parser = argparse.ArgumentParser(
+	description="Simple bulk git clone command.")
+
+parser.add_argument("repository", nargs="+",
+	help="repository name without the url part")
+
+parser.add_argument("-d", "--directory",
+	help="base directory where repository will be downloaded")
+
+args = parser.parse_args()
+
+if __name__ == '__main__':
+	directory = args.directory if args.directory is not None else ""
+
+	if directory and not os.path.exists(directory):
+		print("Creating directory '%s'..." % directory)
+		os.system("mkdir -p " + directory)
+
+	for repo in args.repository:
+		os.system("git clone 'https://github.com/%s' %s" % (repo, directory))

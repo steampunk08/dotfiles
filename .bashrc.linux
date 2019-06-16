@@ -14,7 +14,7 @@ CONFIG_VARIATION=desktop
 DO_TMUX_LOCK=false
 PREFIX=/usr/
 
-PATH=$USER/android-sdk/platform-tools:$PATH
+PATH=/$USER/android-sdk/platform-tools:$PATH
 
 source $HOME/dotfiles/.bashrc.union
 
