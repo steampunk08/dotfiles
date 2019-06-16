@@ -1,0 +1,39 @@
+#!/usr/bin/python3
+
+import argparse
+import os
+
+parser = argparse.ArgumentParser(description="Mount windows with read & write.")
+parser.add_argument("-o", dest="OPTIONS", help="options to be used for mounting comma separated")
+parser.add_argument("DEVICE", help="the DEVICE to be mounted")
+parser.add_argument("MOUNTPOINT", nargs="?", help="place to mount DEVICE")
+
+args = parser.parse_args()
+
+if not os.path.exists(args.DEVICE):
+	print("Error opening %r: No such file or directory" % args.DEVICE)
+	os.sys.exit(1)
+
+exit_code = os.system("ntfsfix " + args.DEVICE)
+if exit_code > 0:
+	print("\nSomething went wrong...\nPlease check that you have typed everything correctly.")
+	os.sys.exit(exit_code)
+
+options = ["remove_hiberfile"]
+
+if args.OPTIONS:
+	options.append(args.OPTIONS)
+
+args.OPTIONS = ",".join(options)
+
+if not args.MOUNTPOINT:
+	args.MOUNTPOINT = str()
+
+if not os.path.exists(args.MOUNTPOINT):
+	os.mkdir(args.MOUNTPOINT)
+
+exit_code = os.system("echo && mount -o {0.OPTIONS} {0.DEVICE} {0.MOUNTPOINT}".format(args))
+
+if exit_code > 0:
+	print("\nMount command failed...\nPlease check that you have typed everything correctly.")
+	os.sys.exit(exit_code)
