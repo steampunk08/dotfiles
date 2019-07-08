@@ -6,4 +6,6 @@ setup-scripts/
 **/.git/
 crontabs/cron.update
 .vim/session/
+*.sug
+*.spl
 .termux/shell

@@ -1,0 +1,84 @@
+#!/usr/bin/python3
+# pal to gpl converter
+
+import argparse
+
+parser = argparse.ArgumentParser()
+parser.add_argument("filename", help="file to convert")
+parser.add_argument("-n", "--name", help="name of the palette")
+parser.add_argument("-c", "--columns", default=0, help="number of columns in gpl file")
+parser.add_argument("-j", "--justify", default=4, help="width to use when justifying")
+parser.add_argument("-", "--stdout", action="store_true", help="print output to stdout")
+
+def _format(parts, width):
+    return [ f"%-{width}s" % x for x in filter(len, parts) ]
+
+def _nop(parts):
+    return parts
+
+def process(file, ignore_hex, method=_nop):
+    color_data = []
+    counter = 0
+
+    for line in file:
+        splits = line.split()
+
+        if len(splits) in (3,4) and splits[0].isnumeric():
+            end = -1 if ignore_hex and len(splits) == 4 else None
+            counter += 1
+            processed = " ".join(method(splits[:end]))
+            color_data.append(processed + "\n")
+
+    return (color_data, counter)
+
+def pal_to_gpl(palfile, name, columns):
+    header = [f"GIMP Palette\nName: {name}\nColumns: {columns}\n"]
+    header.extend(process(palfile, False, _format)[0])
+    # print(header)
+    return header
+
+def gpl_to_pal(gplfile):
+    outcome = process(gplfile, True)
+    ncolors = outcome[1]
+
+    header = [f"JASC-PAL\n0100\n{ncolors}\n"]
+    header.extend(outcome[0])
+    # print(header)
+    return header
+
+
+if __name__ == "__main__":
+    args = parser.parse_args()
+    _format.__defaults__ = (args.justify,)
+
+    if args.name is None:
+        args.name = ".".join(args.filename.split(".")[:-1])
+
+    with open(args.filename, "r") as f:
+        file = f.readlines()
+
+    if args.filename.endswith(".pal"):
+        filedata = pal_to_gpl(file, args.name, args.columns)
+        new_content = "".join(filedata)
+
+        if args.stdout: 
+            print(new_content)
+            exit(0)
+
+        with open(args.name + ".gpl", "w") as f:
+            f.write(new_content)
+
+    if args.filename.endswith(".gpl"):
+        filedata = gpl_to_pal(file)
+        new_content = "".join(filedata)
+
+        if args.stdout: 
+            print(new_content)
+            exit(0)
+
+        with open(args.name + ".pal", "w") as f:
+            f.write(new_content)
+
+process(file, _format)
+
+# gplfile = open(name.split(".")[0]+".gpl", "

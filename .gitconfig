@@ -1,26 +1,30 @@
 [user]
-	name    = Siphesihle Mhlongo
-	email   = sphe0619840353@gmail.com
+   name     = Siphesihle Mhlongo
+   email    = sphe0619840353@gmail.com
 [github]
-   user    = steampunk08
+   user     = steampunk08
 [core]
-	editor  = nvim
+   editor   = nvim
+   autocrlf = input
 [alias]
-	s       = status
-   set     = config --global
-   edit    = config --global -e
-	rmc     = rm --cached
-   l       = log --decorate --graph
-	unstage = reset HEAD --
-   release = !git archive master --format=zip > release-$(git describe master).zip
+   s        = status
+   set      = config --global
+   edit     = config --global -e
+   rmc      = rm --cached
+   l        = log --decorate --graph
+   ll       = log --decorate --graph -p --stat
+   stats    = log --stat
+   unstage  = reset HEAD --
+   release  = !git archive master --format=zip > release-$(git describe master).zip
+   recommit = commit --amend
 [credential]
-	helper  = store
+   helper   = store
 
 ; Steampunklights Git theme
 [color "status"]
-	updated         = 197
+   updated         = 197
    changed         = 197
-	added           = 154
+   added           = 154
    untracked       = 105
    branch          = 105 bold
    header          = 242
