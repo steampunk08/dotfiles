@@ -1,44 +1,188 @@
-#!/bin/bash
+#!/usr/bin/python
 
-D=setup-scripts
-# WARNING: 
-#   this script depends on all the scripts
-#   under the "setups/" directory
+from __future__ import print_function
+import os
+import sys
+import re
 
-# load utility functions
-source $D/utils.bash
+try:
+    input = raw_input
+except NameError:
+    pass
 
-clear
-echo_normal "Starting Setup Script"
+DEFAULT_PROGRAMS = "neovim wget".split()
+SCRIPT_DIRECTORY = os.path.realpath(os.curdir)
+SYMLINK_TARGETS_FILE =\
+    SCRIPT_DIRECTORY + "/symlink.targets"
 
-SCRIPT_NAME=$(basename $0)
-SCRIPT_PATH=$(realpath ${0%${SCRIPT_NAME}})
+TERMUX_SYMLINK_TARGETS =\
+    SCRIPT_DIRECTORY + "/symlink.termux.targets"
 
-# TARGETS_FILE=$SCRIPT_PATH/setups/symlink.targets
+LINUX_SYMLINK_TARGETS =\
+    SCRIPT_DIRECTORY + "/symlink.linux.targets"
 
-TARGETS_FILE=$SCRIPT_PATH/symlink.targets
+HINTS_BANNER = """HINTS:
+  * your responeses can include environment variables e.g. $HOME
+  * what ever is inside the brackets near to the question is the default
+  * if you want to the default just click enter without typing anything
+  * when in doubt use the default
+  * press Ctrl+C to exit from this program
+"""
 
-if [[ -z $DESTINATION ]]; then
-   # DESTINATION=$HOME/safe
-   read -p "Where do you want to setup? " DESTINATION
-fi
-DESTINATION=$(eval echo $DESTINATION)
+DEBUG = False
 
-if [[ -z $DEVICE_TYPE ]]; then
-   # DEVICE_TYPE=android
-   read -p "Which do you use (android|desktop)? " DEVICE_TYPE
-fi
+expand = os.path.expandvars
 
-if [[ ! -d $D ]]; then
-   alias echo_="COLOR_NORMAL=196 echo_normal"
-   echo_ "This script must be in the same directory as the"
-   echo_ "setupscripts/ directory."
-   exit 1
-fi
+def getinput(prompt, default=None, validation=None):
+    global DEBUG
 
-if [ ! -d $DESTINATION ]; then
-   mkdir -pv $DESTINATION
-fi
+    prompt += " " + ("" if default is None else "(%s)" % default) + "? "
+    prompt = expand(prompt)
 
-echo_progress "Creating links..."
-DEVICE=$DEVICE_TYPE SOURCE_PATH=$SCRIPT_PATH $D/lntargs $TARGETS_FILE $DESTINATION
+    while True:
+        response = input(prompt)
+
+        if response == "":
+            response = default
+
+        if validation is not None:
+            if response in validation:
+                break
+            else:
+                print("Response '%s' is not valid" % response)
+        else:
+            break
+    return expand(response)
+
+def parse(targets_file):
+    global DEBUG
+
+    command = ""
+    curdir = "."
+    if not os.path.isfile(targets_file):
+        if DEBUG:
+            print("File '%s' not found." % targets_file)
+        return
+
+    with open(targets_file) as f:
+        for line in f:
+            line = re.sub(r"#.*$", "", line.strip())
+            line = re.sub(r"\((.+)\)", r"${\1}", line)
+
+            if line.endswith(":"):
+                command += "[ ! -d DIR ] && mkdir -p DIR;"
+                command += "cd DIR;\n"
+                curdir = line[:-1]
+
+                command = command.replace("DIR", curdir)
+
+            elif line == "":
+                continue
+            else:
+                parts = line.split()
+                end = len(parts)-1
+
+                name = parts[0]
+                alias = name
+
+                if "as" in parts and parts.index("as") != end:
+                    alias = parts[-1]
+
+                command += "ln -s %s/%s %s;\n" %\
+                    (SCRIPT_DIRECTORY, name, alias)
+        command = expand(command)
+
+        if DEBUG:
+            print(command)
+        os.system(command)
+
+def install(programs, do_upgrade):
+    os.system("apt update")
+    if do_upgrade:
+        os.system("apt upgrade")
+
+    os.system("apt install " + " ".join(programs))
+
+def main():
+    global DEBUG
+
+    global DEFAULT_PROGRAMS
+    global SYMLINK_TARGETS_FILE
+    global HINTS_BANNER
+
+    # clear screen
+    os.system("clear")
+
+    print("Starting Setup Script\n")
+    print(HINTS_BANNER)
+
+    while True:
+        setup_home = getinput("Where do you want to setup", "$HOME")
+        setup_home = setup_home.replace("~", os.environ["HOME"])
+
+        if os.path.isdir(setup_home):
+            break
+        else:
+            print("Directory '%s' does not exist" % setup_home)
+            response = input("Do you want to create it (Yes/n)? ")
+
+            if re.match(r"y|ye|yes", response.lower()):
+                os.system("mkdir -p " + setup_home)
+                print()
+                break
+
+    setup_type =\
+        getinput("Which setup do you want 'termux' or 'linux'",
+            "linux", ["termux", "linux"])
+
+    os.environ["SETUP_HOME"] = setup_home
+    os.environ["SETUP_TYPE"] = setup_type
+
+    print("Creating links... ", end="")
+    parse(SYMLINK_TARGETS_FILE)
+
+    if setup_type == "termux":
+        parse(TERMUX_SYMLINK_TARGETS)
+    else:
+        parse(LINUX_SYMLINK_TARGETS)
+
+    print("Done")
+
+    if setup_type == "termux":
+        # termux default programs
+        DEFAULT_PROGRAMS += ["coreutils"]
+    else:
+        # linux default programs
+        DEFAULT_PROGRAMS += ["snapd"]
+
+    joined = []
+
+    print("""
+DEFAULT PROGRAMS ARE:
+%s
+""" % " ".join(DEFAULT_PROGRAMS))
+
+    response = \
+        input("Do you want to install these programs (Yes/n)? ")
+
+
+    if re.match(r"y|ye|yes", response.lower()):
+        response = \
+            input("Do you also want to upgrade old programs (Yes/n)? ")
+
+        print("Installing... ")
+
+        if re.match(r"y|ye|yes", response.lower()):
+            install(DEFAULT_PROGRAMS, True)
+        else:
+            install(DEFAULT_PROGRAMS, False)
+
+        print("Done")
+
+    print("Your new setup is ready now... ")
+
+if __name__ == "__main__":
+    try:
+        main()
+    except KeyboardInterrupt:
+        print("\nGood bye...\n")

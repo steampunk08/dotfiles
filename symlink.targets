@@ -1,13 +1,12 @@
 # save files under base directory
-.:
-.termux
-.shortcuts
+(SETUP_HOME):
 .vim
-.zsh
-.bashrc
+.bashrc.(SETUP_TYPE) as .bashrc
+.bash_aliases
 .vimrc
-.zshrc.(DEVICE) # env variable expansion
-.zshrc
+# .zsh
+# .zshrc.(SETUP_TYPE) as .zshrc
+# .zshrc
 .tmux.conf
 .gitconfig
 .lesskey
@@ -17,7 +16,7 @@ bin
 crontabs
 
 # save files under .config
-.config:
+(SETUP_HOME)/.config:
 .vifm
 
 # create the alias nvim pointing to .vim

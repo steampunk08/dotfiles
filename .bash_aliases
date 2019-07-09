@@ -14,7 +14,7 @@ alias ll='ls -l'
 alias lf='ls -CF'
 
 function lp() {
-    ls -l $@ | gawk '{ print $1, $9 }'
+    ls -l $@ | awk '{ print $1, $9 }'
 }
 
 if [ -x /usr/bin/dircolors ]; then
