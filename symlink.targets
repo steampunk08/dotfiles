@@ -12,7 +12,6 @@
 .lesskey
 addons
 plugins.vim
-bin
 crontabs
 
 # save files under .config
