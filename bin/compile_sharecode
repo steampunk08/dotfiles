@@ -1,0 +1,269 @@
+#!/usr/bin/env /python
+
+import argparse
+import os
+import re
+
+try:
+    input = raw_input
+except:
+    pass
+
+WARNING_COLOR = "\033[38;5;245m"
+CLEAR = "\033[0m"
+
+parser = argparse.ArgumentParser()
+
+parser.add_argument("-J", "--javascript", nargs="*",
+    help="""The JavaScript files to compile. 
+If the HTML argument is not given the compiled scripts
+are saved to separate files with the '.min.js' extension.""")
+
+parser.add_argument("-C", "--css", nargs="*",
+    help="""The CSS files to compile. 
+If the HTML argument is not given the compiled stylesheets
+are saved to separate files with the '.min.css' extension.""")
+
+parser.add_argument("-H", "--html",
+    help="""The HTML file to compile.
+If this argument is provided the compiled scripts and 
+stylesheets will be embedded into the HTML file so long
+as those scripts and stylesheets are referenced in the HTML document. 
+""")
+
+parser.add_argument("-S", "--save", action="store_true",
+    help="""Save scripts and stylesheets that did
+not embed into HTML document because they were
+not referenced by the HTML document""")
+
+parser.add_argument("-O", "--overwrite", action="store_true",
+    help="Forcefully overwrite all files without confirmation.")
+
+parser.add_argument("-N", "--name",
+    help="The name of the compiled HTML document.")
+
+def verify_exists(filename):
+    if not os.path.exists(filename):
+        print("Error: file %r does not exist" % filename)
+        exit(1)
+
+
+def compile_css(stylesheet_lines):
+    compiled = []
+
+    for line in stylesheet_lines:
+        line = line.strip()
+
+        line = re.sub(r" *(:|\{|,|\(|\)) *", r"\1", line)
+
+        compiled.append(line)
+
+    return "".join(compiled)
+
+def compile_css_file(filename):
+    verify_exists(filename)
+
+    with open(filename) as f:
+        return compile_css(f.readlines())
+
+def compile_javascript(script_lines):
+    compiled = []
+
+    for line in script_lines:
+        # remove whitespaces
+        line = line.strip()
+
+        # check if the line is empty
+        if not len(line):
+            continue
+
+        # remove coments
+        line = re.sub(r"//.+?$", "", line)
+
+        # check if the line is empty again
+        if not len(line):
+            continue
+
+        # if not a branch line or line ends with braces; add a semi colon
+        branch = re.compile("^(if|for|while|do|else)")
+        if not branch.match(line) and not re.search(r"({|})$", line):
+            line += ";"
+
+        operators = re.compile(r" *?((\+|\*|-|\|\||&&|%|=|<|>|/)=?) +")
+        others = re.compile(r" *?(;|,|!=) +")
+
+        line = operators.sub(r"\1", line)
+        line = others.sub(r"\1", line)
+
+        compiled.append(line)
+
+    # remove whitespaces around parenthesis
+    return re.sub(r"(\)|\() ", r"\1", "".join(compiled))
+
+def compile_javascript_file(filename):
+    verify_exists(filename)
+
+    with open(filename) as f:
+        return compile_javascript(f.readlines())
+
+def revert_name(filename):
+    segments = filename.split(".")
+
+    if segments[-2] == "min":
+        segments.pop(-2)
+
+    return ".".join(segments)
+
+def warn_non_embedded_files(type, files):
+    global WARNING_COLOR, CLEAR
+    
+    print(WARNING_COLOR)    
+
+    print("Warning: These %s did not embed as they were not referenced:" % type)
+    for file in files.keys():
+        print("    - " + revert_name(file))
+    print("(add the --save argument to save these files as separate files)")
+    print(CLEAR)
+
+def compile_html(markup_lines, stylesheets={}, scripts={}):
+    compiled = []
+
+    for line in markup_lines:
+        line = line.strip()
+
+        match = re.match(r"<link.*?href=('|\")(.+?)\1.*?>", line)
+
+        if match:
+            filename = new_name(match.group(2))
+
+            if filename in stylesheets.keys():
+                line = "<style type=\"text/css\">%s</style>" % \
+                    stylesheets.pop(filename)
+
+        match = re.match(r"<script.*?src=('|\")(.+?)\1.*?>.*?</script>", line)
+
+        if match:
+            filename = new_name(match.group(2))
+
+            if filename in scripts.keys():
+                line = "<script type=\"text/javascript\">%s</script>" % \
+                    scripts.pop(filename)
+
+
+        compiled.append(line)
+
+    warn_non_embedded_files("stylesheets", stylesheets)
+    warn_non_embedded_files("scripts", scripts)
+
+    if args.save:
+        for filename, content in scripts.items() + stylesheets.items():
+            save_file(filename, content)
+
+    return "".join(compiled)
+
+def compile_html_file(filename, stylesheets={}, scripts={}):
+    verify_exists(filename)
+    
+    with open(filename) as f:
+        return compile_html(f.readlines(), stylesheets, scripts)
+
+def verify_overwrite(filename):
+    if args.overwrite:
+        return True
+
+    if os.path.exists(filename):
+        response = input("File %r already exists do you want to replace it (Y/n)? " % filename)
+        return bool(re.match(r"y(es)?", response, re.IGNORECASE))
+
+    return True
+
+def save_file(filename, content):
+    if verify_overwrite(filename):
+        with open(filename, "w") as f:
+            f.write(content)
+
+def new_name(filename):
+    segments = filename.split(".")
+    
+    if "min" not in segments:
+        segments.insert(-1, "min")
+
+    return ".".join(segments)
+
+stylesheets_other = {}
+stylesheets_compiled = {}
+
+scripts_other = {}
+scripts_compiled = {}
+
+def warn_non_compile(filename):
+    global WARNING_COLOR, CLEAR
+
+    print(WARNING_COLOR)
+
+    print("""Warning: file %r won't compile...
+    Remove the '.min' in it's name for it to compile.""" % filename)
+
+    print(CLEAR)
+
+args = parser.parse_args()
+
+if args.css is not None:
+    print("Compiling stylesheets...")
+
+    for stylesheet in args.css:
+        if new_name(stylesheet) == stylesheet:
+            warn_non_compile(stylesheet)
+
+            with open(stylesheet) as f:
+                stylesheets_other[stylesheet] = f.read()
+            continue
+
+        outname = new_name(stylesheet)
+
+        stylesheets_compiled[outname] = compile_css_file(stylesheet)
+
+        print("Compiled %r..." % stylesheet)
+
+        if not args.html:
+            print("Saving it to %r\n" % outname)
+            save_file(outname, stylesheets_compiled[outname])
+            print("Saved")
+
+if args.javascript is not None:
+    print("Compiling javascript...")
+
+    for script in args.javascript:
+        if new_name(script) == script:
+            warn_non_compile(script)
+
+            with open(script) as f:
+                scripts_other[script] = f.read()
+            continue
+
+        outname = new_name(script)
+        scripts_compiled[outname] = compile_javascript_file(script)
+
+        print("Compiled %r..." % script)
+
+        if not args.html:
+            print("Saving it to %r" % outname)
+            save_file(outname, scripts_compiled[outname])
+            print("Saved")
+
+if args.html is not None:
+    print("Compiling html...")
+
+    html = args.html
+    if new_name(html) == html:
+        warn_non_compile(script)
+        exit(0)
+
+    scripts = dict(scripts_other.items() + scripts_compiled.items())
+    stylesheets = dict(stylesheets_other.items() + stylesheets_compiled.items())
+
+    html_compiled = compile_html_file(html, stylesheets, scripts)
+
+    save_file(new_name(html) if args.name is None \
+        else args.name, html_compiled)
+    print("Saved")    

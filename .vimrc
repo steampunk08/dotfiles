@@ -1,6 +1,7 @@
 " Sphe M | Steampunk08 vimrc 2
 
 let g:disarmed = v:false
+
 if !exists('VIMRC_HAS_BEEN_SOURCED') || g:disarmed
    let maplocalleader = "="
    let mapleader = "-"
@@ -172,9 +173,13 @@ endfunction
 command! ReformatCSS call ReformatCSS()
 function! ReformatCSS()
    echo "re-formatting..."
-   %s/{/{/g
-   %s/;/;/g
-   %s/}/}/g
+   %s/{/{
+/g
+   %s/;/;
+/g
+   %s/}/
+}
+/g
    redraw!
    normal! gg=G
    echo "done re-formatting!"

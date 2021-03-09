@@ -1,4 +1,4 @@
-#!/usr/bin/bash
+#!/usr/bin/env bash
 
 if [[ -z $DEFULT_WINDOW_NAME ]]; then
    DEFULT_WINDOW_NAME=defualt

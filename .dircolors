@@ -1,9 +1,8 @@
 #         DIRCOLORS
 # maintainer: Siphesihle Mhlongo
 #    updated: 02 Sep 2018
-# theme name: sweet spring
+# theme name: steampunklights
 
-# termcap {{{
 TERM Eterm
 TERM ansi
 TERM color-xterm
@@ -53,13 +52,12 @@ TERM xterm-256color
 TERM xterm-88color
 TERM xterm-color
 TERM xterm-debian
-# }}}
-# special {{{
-#NORMAL 00
+
+NORMAL 38;5;251
 #FILE 00
 #RESET 0
 DIR 38;5;105
-LINK 01;38;5;111
+LINK 38;5;111;1
 # MULTIHARDLINK 00
 FIFO 33
 SOCK 38;5;197;1;4
@@ -74,9 +72,9 @@ SETGID 30;43
 STICKY_OTHER_WRITABLE 30;42
 OTHER_WRITABLE 38;5;105;1;4
 STICKY 37;44
-EXEC 01;38;5;154
-# }}}
-# archive {{{
+EXEC 38;5;154;1
+
+# archive
 .tar  38;5;197;1
 .tgz  38;5;197;1
 .lzma 38;5;197;1
@@ -93,15 +91,16 @@ EXEC 01;38;5;154
 .jar  38;5;197;1
 .rar  38;5;197;1
 .7z   38;5;197;1
-# }}}
-# backup/temp {{{
+
+
+# backup/temp
 *~   38;5;242
 *-   38;5;242
 .swp 38;5;242
 .swo 38;5;242
 .swn 38;5;242
-# }}}
-# compilied {{{
+
+# compilied
 .so    38;5;220;1
 .o     38;5;220;1
 .a     38;5;220;1
@@ -111,8 +110,8 @@ EXEC 01;38;5;154
 .pyo   38;5;220;1
 .class 38;5;220;1
 .dex   38;5;220;1
-# }}}
-# document {{{
+
+# document
 *README       33;1
 *LICENSE      33;1
 *COPYING      33;1
@@ -129,8 +128,8 @@ EXEC 01;38;5;154
 .markdown     33;1
 .rst          33;1
 .txt          33;1
-# }}}
-# shell {{{
+
+# shell
 .awk        38;5;197;1
 .bash       38;5;197;1
 .addon      38;5;197;1
@@ -142,8 +141,8 @@ EXEC 01;38;5;154
 .dir_colors 38;5;197;1
 .sample     38;5;197;1
 *zsh* 38;5;197;1
-# }}}
-# config {{{
+
+# config
 .irbrc     38;5;197
 .zshrc     38;5;197
 .vimrc     38;5;197
@@ -153,14 +152,14 @@ EXEC 01;38;5;154
 .git-credentials 38;5;197
 .json 38;5;197
 .lesskey 38;5;197
-# }}}
-# secondary config {{{
+
+# secondary config
 .ini 38;5;220;1
 .editorconfig 38;5;220
 .zshrc.all 38;5;95
 .zshrc.android 38;5;154
-# }}}
-# code {{{
+
+# code
 .cpp  38;5;95
 .h    38;5;95
 .c    38;5;95
@@ -175,8 +174,8 @@ EXEC 01;38;5;154
 .vim  38;5;95
 .vifm 38;5;95
 .qml  38;5;95
-# }}}
-# web {{{
+
+# web
 .css  38;5;98;1
 .erb  38;5;98;1
 .htm  38;5;98;1
@@ -185,8 +184,8 @@ EXEC 01;38;5;154
 .scss 38;5;98;1
 .sass 38;5;98;1
 .php  38;5;98;1
-# }}}
-# image {{{
+
+# image
 .jpg  38;5;67
 .png  38;5;67
 .svg  38;5;67
@@ -194,28 +193,27 @@ EXEC 01;38;5;154
 .bmp  38;5;67
 .ico  38;5;67
 .gif  38;5;67
-# }}}
-# video {{{
+
+# video
 .avi 38;5;105;1
 .mp4 38;5;105;1
 .mov 38;5;105;1
 .wmv 38;5;105;1
 .webm 38;5;105;1
 .mkv 38;5;105;1
-# }}}
-# audio {{{
+
+# audio
 .mp3 38;5;95;1
 .m4a 38;5;95;1
 .wav 38;5;95;1
 .ogg 38;5;95;1
 .agg 38;5;95;1
-# }}}
-# misc {{{
+
+# misc
 .log 38;5;242
 *history 38;5;241
 *hst 38;5;241
 *hsts 38;5;241
 .targets 38;5;242
-# }}}
 
 # vim: fdm=marker:fdl=0:ft=dircolors

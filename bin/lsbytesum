@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 show_usage() {
    echo "Usage: $(basename $0) [-R|--recurse]... (-R, recurse in dirs)"

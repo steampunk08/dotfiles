@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 TOOLS=/media/$USER/SPHEM/tools/builtins
 LOCAL=$HOME/windows-tools

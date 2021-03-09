@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 let index=16
 for R in 00 5f 87 af d7 ff; do

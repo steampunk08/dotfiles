@@ -3,9 +3,6 @@
    email    = sphe0619840353@gmail.com
 [github]
    user     = steampunk08
-[core]
-   editor   = nvim
-   autocrlf = input
 [alias]
    s        = status
    set      = config --global

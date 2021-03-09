@@ -1,4 +1,4 @@
-#!/usr/bin/ruby
+#!/usr/bin/env /ruby
 
 sessions=`tmux list-sessions -F "#S"`.split
 sessions=(1..sessions.size).to_a.zip(sessions)

@@ -1,18 +1,12 @@
-#!/usr/bin/bash
+#!/usr/bin/env bash
 # Siphesihle Mhlongo's Bash Config
 
-export SHELL=${PREFIX}bin/bash
+export SHELL="/usr/bin/env bash"
 export PATH=$HOME/mybin:$HOME/bin:$PATH
-export TERM=xterm-256color
+# export TERM=xterm-256color
 export EDITOR=nvim
 export PAGER=less
 export HISTCONTROL=ignoredups
-
-export PERSONAL_PATH=$HOME/bin
-export PATH=$HOME/bin:$PATH:$PERSONAL_PATH
-export TERM=xterm-256color
-export EDITOR=nvim
-export PAGER=less
 export EXTCARD=/storage/3039-3361
 export TERMUX=$EXTCARD/Android/data/com.termux/
 
@@ -22,7 +16,7 @@ export HISTCONTROL=erasedups:ignoredups
 
 export CRONTABS_DIR=$HOME/crontabs
 
-USER=${USER:-"Sphe M"}
+export USER=${USER:-"Sphe M"}
 
 export XDG_CONFIG_HOME=$HOME/.config
 
@@ -49,6 +43,9 @@ shopt -s direxpand
 shopt -s globasciiranges globstar dotglob
 shopt -s interactive_comments
 shopt -s lithist
+
+eval $(dircolors -b ~/.dircolors 2>/dev/null)
+set colored-stats on
 
 if [[ -z $(pgrep cron) ]]; then
    cron -c $CRONTABS_DIR

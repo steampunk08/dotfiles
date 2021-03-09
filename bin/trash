@@ -1,4 +1,4 @@
-#!/usr/bin/bash
+#!/usr/bin/env bash
 
 export TRASH_DIR=$HOME/.trash
 # export TRASH_INDEX=$TRASH_DIR/.trash.index

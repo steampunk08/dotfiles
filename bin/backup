@@ -1,4 +1,4 @@
-#!/usr/bin/bash
+#!/usr/bin/env bash
 
 BACKUP_NAME=backup-$(date "+%d%m%Y")
 SAVE_SYMLINKS=true

@@ -1,4 +1,4 @@
-#!/usr/bin/bash
+#!/usr/bin/env bash
 # Quick script for running java programs on termux
 
 SCRIPT_NAME=$(basename $0)

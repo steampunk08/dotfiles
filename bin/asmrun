@@ -1,4 +1,4 @@
-#!/usr/bin/bash
+#!/usr/bin/env bash
 
 # Quick building script for running assembly programs.
 # Usage: asmrun [-n NAME] FILE(S)

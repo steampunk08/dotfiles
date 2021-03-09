@@ -1,4 +1,4 @@
-#!/usr/bin/zsh
+#!/usr/bin/env /zsh
 
 declare size=${$(stty size)[2]}
 declare line

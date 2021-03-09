@@ -1,4 +1,4 @@
-#!/data/data/com.termux/files/usr/bin/bash
+#!/data/data/com.termux/files/usr/bin/env bash
 # termux-chroot script with minor changes
 
 SCRIPTNAME=$(basename $0)

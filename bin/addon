@@ -1,4 +1,4 @@
-#!/usr/bin/bash
+#!/usr/bin/env bash
 
 # colour configurations
 _NORMAL="\e[0m"
@@ -80,7 +80,7 @@ while getopts "d:e:hl" option; do
             for opt in $@; do
                name=$ADDONS_FOLDER/${opt%.addon}.addon
                if [ ! -f $name ]; then
-                  echo '#!/bin/bash' > $name
+                  echo '#!/usr/bin/env bash' > $name
                fi
                names+=" $name"
             done
