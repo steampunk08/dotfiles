@@ -1,0 +1,42 @@
+#!/bin/bash
+
+echo_normal() {
+	echo -e $@
+}
+
+echo_progress() {
+	echo -e "\e[38;5;94m$@\e[0m"
+}
+
+clear
+echo_normal "Starting Setup Script"
+
+SCRIPT_NAME=$(basename $0)
+SCRIPT_PATH=$(realpath ${0%${SCRIPT_NAME}})
+
+# TARGETS_FILE=$SCRIPT_PATH/setups/symlink.targets
+
+TARGETS_FILE=$SCRIPT_PATH/symlink.targets
+
+if [[ -z $DESTINATION ]]; then
+   # DESTINATION=$HOME/safe
+   read -p "Where do you want to setup? " DESTINATION
+fi
+DESTINATION=$(eval echo $DESTINATION)
+
+if [[ -z $DEVICE_TYPE ]]; then
+   # DEVICE_TYPE=android
+   read -p "Which do you use (android|desktop)? " DEVICE_TYPE
+fi
+
+if [ ! -d $DESTINATION ]; then
+   mkdir -pv $DESTINATION
+fi
+
+lntargs() {
+	local TARGETS_FILE=$1
+	local DESTINATION=$2 
+}
+
+echo_progress "Creating links..."
+DEVICE=$DEVICE_TYPE SOURCE_PATH=$SCRIPT_PATH $D/lntargs $TARGETS_FILE $DESTINATION

@@ -1,4 +1,4 @@
-#!/usr/bin/env /python3
+#!/usr/bin/env python3
 
 #      author: Sphe M
 # description: python version of my todo script 
@@ -33,11 +33,15 @@ parser.add_argument("message",
 args = parser.parse_args()
 
 def read_todos(filename):
+    try:
 	with open(filename, "r") as f:
 		return list(f)
+    except IOError:
+        write_file(filename, "", "w")
+    return []
 
 def write_file(filename, message, mode="a"):
-	if not len(message): return
+	if not len(message) and mode == "a": return
 	
 	with open(filename, mode) as f:
 		f.write(message + "\n")
@@ -47,6 +51,7 @@ def list_todos(bullet):
 		if i.startswith("\n"):
 			continue
 		print("%s%s" % (bullet, i.rstrip()))
+        else: print("%sYou currently have no todo's" % bullet)
 
 if __name__ == '__main__':
 	if args.edit:
